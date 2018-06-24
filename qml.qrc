@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>LoginForm.qml</file>
+        <file>SignupForm.qml</file>
+        <file>HomeForm.qml</file>
+        <file>WarehouseForm.qml</file>
+        <file>ImportForm.qml</file>
+        <file>ExportForm.qml</file>
+        <file>GoodsForm.qml</file>
+        <file>PeopleForm.qml</file>
+    </qresource>
+</RCC>
