@@ -52,9 +52,9 @@ Item {
     ToolBar {
         id: signupBar
         x: 0
-        y: window.height - 90
+        y: window.height - 50
         width: window.width
-        height: 48
+        height: 50
         Material.background: "#20B2AA"
         ToolButton {
             id: signupButton

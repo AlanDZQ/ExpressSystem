@@ -10,5 +10,6 @@
         <file>ExportForm.qml</file>
         <file>GoodsForm.qml</file>
         <file>PeopleForm.qml</file>
+        <file>PersonalInfoForm.qml</file>
     </qresource>
 </RCC>

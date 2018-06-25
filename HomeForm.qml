@@ -4,25 +4,22 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Material 2.0
 
 Item {
-    ToolBar {
-        id: toolBarTop
-        x: 0
-        y: 0
-        width: window.width
-        Material.background: "#20B2AA"
-        ToolButton {
-            x : parent.width - 300
-            width: 200
-            id: personButton
-            text: qsTr("Personal Center")
-        }
-
-        ToolButton {
-            x : parent.width - 100
-            width: 100
-            id: logoutButton
-            text: qsTr("Log out")
-            onClicked:stackView.pop()
+    StackView {
+        id: homeStackView
+        x: toolBarLeft.width
+        width: parent.width - toolBarLeft.width
+        height: parent.height
+        initialItem:
+        Text {
+            id: info
+            color: "#6C6C6C"
+            font.family: "Arial"
+            font.pixelSize: 20
+            horizontalAlignment: Qt.AlignHCenter
+            verticalAlignment: Qt.AlignVCenter
+            height: parent.height
+            width: parent.width
+            text:"Click left hand bar to do something"
         }
     }
 
@@ -33,6 +30,7 @@ Item {
         width: 100
         height: window.height
         Material.background: "#008080"
+        Material.accent: "#20B2AA"
         Label {
             y: 20
             width:100
@@ -57,7 +55,9 @@ Item {
             height:50
             id: warehouseButton
             text: qsTr("stock")
-            onClicked: stackView.push("WarehouseForm.qml")
+            checkable: true
+            autoExclusive: true
+            onClicked: homeStackView.push("WarehouseForm.qml")
         }
 
         ToolButton {
@@ -66,7 +66,9 @@ Item {
             height:50
             id: goodsButton
             text: qsTr("goods")
-            onClicked: stackView.push("GoodsForm.qml")
+            autoExclusive: true
+            checkable: true
+            onClicked: homeStackView.push("GoodsForm.qml")
         }
 
         ToolButton {
@@ -75,7 +77,9 @@ Item {
             height:50
             id: importButton
             text: qsTr("import")
-            onClicked: stackView.push("ImportForm.qml")
+            autoExclusive: true
+            checkable: true
+            onClicked: homeStackView.push("ImportForm.qml")
         }
 
         ToolButton {
@@ -84,7 +88,9 @@ Item {
             height:50
             id: exportButton
             text: qsTr("export")
-            onClicked: stackView.push("ExportForm.qml")
+            autoExclusive: true
+            checkable: true
+            onClicked: homeStackView.push("ExportForm.qml")
         }
 
         ToolButton {
@@ -93,7 +99,42 @@ Item {
             height:50
             id: peopleButton
             text: qsTr("people")
-            onClicked: stackView.push("PeopleForm.qml")
+            autoExclusive: true
+            checkable: true
+            onClicked: homeStackView.push("PeopleForm.qml")
+        }
+
+        ToolButton {
+            y: parent.height-100
+            width: 100
+            height:50
+            id: personButton
+            Image {
+                id: userImage
+                x:40
+                y:parent.height/2-10
+                width: 20
+                height: 20
+                source: "user.png"
+            }
+            onClicked: stackView.push("PersonalInfoForm.qml")
+
+        }
+
+        ToolButton {
+            y: parent.height-50
+            width: 100
+            height:50
+            id: logoutButton
+            Image {
+                id: logoutImage
+                x:40
+                y:parent.height/2-10
+                width: 20
+                height: 20
+                source: "logout.png"
+            }
+            onClicked:stackView.pop()
         }
     }
 }

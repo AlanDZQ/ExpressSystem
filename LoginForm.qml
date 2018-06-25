@@ -8,7 +8,7 @@ Item {
     ToolBar {
         id: loginToolBar
         x: 0
-        y: window.height - 90
+        y: window.height - 50
         width: window.width
         height: 50
         position: ToolBar.Footer
@@ -63,7 +63,7 @@ Item {
     Label {
         id: logo
         x: window.width/2 - 65
-        y: window.height/2 - 200
+        y: window.height/2 - 180
         text: qsTr("Logistics")
         color: "#20B2AA"
         font.strikeout: true
@@ -77,7 +77,7 @@ Item {
     TextField {
         id: nameField
         x: window.width/2 - 125
-        y: window.height/2 - 75
+        y: window.height/2 - 25
         width: 250
         height: 50
         Material.accent: "#20B2AA"
@@ -89,7 +89,7 @@ Item {
     TextField {
         id: passwordField
         x: window.width/2 - 125
-        y: window.height/2 - 25
+        y: window.height/2+25
         width: 250
         height: 50
         Material.accent: "#20B2AA"

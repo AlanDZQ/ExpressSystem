@@ -5,7 +5,7 @@ import QtQuick.Window 2.0
 import DBConnection 1.0
 import QtQuick.Controls.Material 2.0
 
-ApplicationWindow { 
+ApplicationWindow {
 
     DBConnection {
         id: dbconnection
@@ -16,36 +16,36 @@ ApplicationWindow {
     width: 640
     height: 480
     title: qsTr("System")
-    menuBar: MenuBar {
-        Menu {
-            title: qsTr("&File")
-            Action { text: qsTr("&New...") }
-            Action {
-                text: qsTr("&Open...")
-                onTriggered: fileDialog.visible = true;
-            }
-            Action { text: qsTr("&Save") }
-            Action { text: qsTr("Save &As...") }
-            MenuSeparator { height: 20 }
-            Action { text: qsTr("&Quit")
-                onTriggered: Qt.quit()
-            }
-        }
-        Menu {
-            title: qsTr("&Edit")
-            Action { text: qsTr("&Cut")
-                onTriggered: nameField.cut()
-            }
-            Action { text: qsTr("&Copy")
-                onTriggered: nameField.copy()}
-            Action { text: qsTr("&Paste")
-                onTriggered: nameField.paste()}
-        }
-        Menu {
-            title: qsTr("&Help")
-            Action { text: qsTr("&About")}
-        }
-    }
+//    menuBar: MenuBar {
+//        Menu {
+//            title: qsTr("&File")
+//            Action { text: qsTr("&New...") }
+//            Action {
+//                text: qsTr("&Open...")
+//                onTriggered: fileDialog.visible = true;
+//            }
+//            Action { text: qsTr("&Save") }
+//            Action { text: qsTr("Save &As...") }
+//            MenuSeparator { height: 20 }
+//            Action { text: qsTr("&Quit")
+//                onTriggered: Qt.quit()
+//            }
+//        }
+//        Menu {
+//            title: qsTr("&Edit")
+//            Action { text: qsTr("&Cut")
+//                onTriggered: nameField.cut()
+//            }
+//            Action { text: qsTr("&Copy")
+//                onTriggered: nameField.copy()}
+//            Action { text: qsTr("&Paste")
+//                onTriggered: nameField.paste()}
+//        }
+//        Menu {
+//            title: qsTr("&Help")
+//            Action { text: qsTr("&About")}
+//        }
+//    }
 
     Drawer {
         id: menu
@@ -150,8 +150,8 @@ ApplicationWindow {
                 font.pixelSize: 20
                 horizontalAlignment: Qt.AlignHCenter
                 verticalAlignment: Qt.AlignVCenter
-                height: 200
-                width: 300
+                height: parent.height
+                width: parent.width
             }
             MouseArea{
                 anchors.fill: parent

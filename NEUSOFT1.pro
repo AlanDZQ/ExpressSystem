@@ -17,7 +17,14 @@ SOURCES += \
         main.cpp \
     dbconnection.cpp
 
-RESOURCES += qml.qrc
+RESOURCES += qml.qrc \
+user.png \
+logout.png \
+plus.png \
+reduce.png \
+save.png \
+redo.png \
+undo.png \
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
