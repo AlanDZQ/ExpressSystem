@@ -95,5 +95,6 @@ Item {
         Material.accent: "#20B2AA"
         clip: true
         placeholderText: "Enter your password"
+        echoMode: TextInput.Password
     }
 }

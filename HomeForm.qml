@@ -105,6 +105,17 @@ Item {
         }
 
         ToolButton {
+            y: 300
+            width:100
+            height:50
+            id: supplierButton
+            text: qsTr("supplier")
+            autoExclusive: true
+            checkable: true
+            onClicked: homeStackView.push("SupplierForm.qml")
+        }
+
+        ToolButton {
             y: parent.height-100
             width: 100
             height:50

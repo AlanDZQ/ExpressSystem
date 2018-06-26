@@ -5,7 +5,7 @@ import QtQuick.Controls.Material 2.0
 
 Item {
     ListView {
-        id: warehouseView
+        id: view
         anchors.topMargin: 50
         anchors.fill: parent
         contentWidth: headerItem.width
@@ -13,13 +13,13 @@ Item {
 
         header: Row {
             spacing: 1
-            function itemAt(index) { return repeater.itemAt(index) }
+            function itemAt(index) { return headRepeater.itemAt(index) }
             Repeater {
-                id: repeater
+                id: headRepeater
                 model: ["WarehouseID", "UserID", "Address"]
                 Label {
                     text: modelData
-                    color: "#ddffffff"
+                    color: "#ffffffff"
                     font.pixelSize: 20
                     padding: 10
                     width: 200
@@ -28,7 +28,7 @@ Item {
             }
         }
 
-        model: 100
+        model: dbconnection.openWarehouseinfo().length
         delegate: Column {
             id: delegate
             property int row: index
@@ -38,8 +38,16 @@ Item {
                     model: 3
                     ItemDelegate {
                         property int column: index
-                        text: qsTr("%1x%2").arg(delegate.row).arg(column)
-                        width: warehouseView.headerItem.itemAt(column).width
+                        width: view.headerItem.itemAt(column).width
+                        text: qsTr(getItem(delegate.row, column))
+                        function getItem(i, j){
+                            if(j===0)
+                                return dbconnection.openWarehouseinfo()[i].getWarehouseID
+                            if(j===1)
+                                return dbconnection.openWarehouseinfo()[i].getUserID
+                            if(j===2)
+                                return dbconnection.openWarehouseinfo()[i].getAddress
+                        }
                     }
                 }
             }
@@ -108,9 +116,9 @@ Item {
             Image {
                 id: undoImage
                 x:parent.width/2-15
-                y:parent.height/2-15
+                y:parent.height/2-17
                 width: 30
-                height: 30
+                height: 34
                 source: "undo.png"
             }
         }
@@ -126,9 +134,9 @@ Item {
             Image {
                 id: redoImage
                 x:parent.width/2-15
-                y:parent.height/2-15
+                y:parent.height/2-17
                 width: 30
-                height: 30
+                height: 34
                 source: "redo.png"
             }
         }
@@ -147,6 +155,30 @@ Item {
                 width: 40
                 height: 30
                 source: "save.png"
+            }
+        }
+
+        TextField {
+            id: searchField
+            x: parent.width - 200
+            height: 50
+            placeholderText: "Search"
+            clip: true
+            Material.accent: "#FFFFFF"
+            Material.foreground: "#008080"
+            color: "#ffffffff"
+            selectByMouse: true
+            font.capitalization: Font.MixedCase
+            onEditingFinished: find()
+        }
+    }
+
+    //通过value查找value2
+    function find(){
+        var searchText = searchField.text
+        for( var i = 0; i < 3; i++ ) {
+            for( var j = 0; j < 100; j++ ) {
+                console.log(warehouseView.itemAt(j,i).text)
             }
         }
     }

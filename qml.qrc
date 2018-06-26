@@ -11,5 +11,6 @@
         <file>GoodsForm.qml</file>
         <file>PeopleForm.qml</file>
         <file>PersonalInfoForm.qml</file>
+        <file>SupplierForm.qml</file>
     </qresource>
 </RCC>

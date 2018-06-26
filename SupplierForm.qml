@@ -16,7 +16,7 @@ Item {
             function itemAt(index) { return repeater.itemAt(index) }
             Repeater {
                 id: repeater
-                model: ["EserialID", "Total Price", "Quality", "UserID", "Time", "Receive Name", "Receive Address", "Receive Phone", "Status", "Remark"]
+                model: ["SupplierID", "Name", "Address", "Email", "Phone"]
                 Label {
                     text: modelData
                     color: "#ffffffff"
@@ -28,39 +28,29 @@ Item {
             }
         }
 
-        model: dbconnection.openExportinfo().length
+        model: dbconnection.openSupplierinfo().length
         delegate: Column {
             id: delegate
             property int row: index
             Row {
                 spacing: 1
                 Repeater {
-                    model: 10
+                    model: 5
                     ItemDelegate {
                         property int column: index
                         width: view.headerItem.itemAt(column).width
                         text: qsTr(getItem(delegate.row, column))
                         function getItem(i, j){
                             if(j===0)
-                                return dbconnection.openExportinfo()[i].getEserialID
+                                return dbconnection.openSupplierinfo()[i].getSupplierID
                             if(j===1)
-                                return dbconnection.openExportinfo()[i].getTotalprice.toString()
+                                return dbconnection.openSupplierinfo()[i].getName
                             if(j===2)
-                                return dbconnection.openExportinfo()[i].getQuality.toString()
+                                return dbconnection.openSupplierinfo()[i].getAddress
                             if(j===3)
-                                return dbconnection.openExportinfo()[i].getUserID
+                                return dbconnection.openSupplierinfo()[i].getEmail
                             if(j===4)
-                                return dbconnection.openExportinfo()[i].getTime.toString()
-                            if(j===5)
-                                return dbconnection.openExportinfo()[i].getReceivename
-                            if(j===6)
-                                return dbconnection.openExportinfo()[i].getReceiveaddress
-                            if(j===7)
-                                return dbconnection.openExportinfo()[i].getReceivephone
-                            if(j===8)
-                                return dbconnection.openExportinfo()[i].getStatus
-                            if(j===9)
-                                return dbconnection.openExportinfo()[i].getRremark
+                                return dbconnection.openSupplierinfo()[i].getPhone
                         }
                     }
                 }

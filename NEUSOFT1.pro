@@ -15,7 +15,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-    dbconnection.cpp
+    dbconnection.cpp \
+    user.cpp \
+    warehouse.cpp \
+    supplier.cpp \
+    importinfo.cpp \
+    goodinfo.cpp \
+    exportinfo.cpp
 
 RESOURCES += qml.qrc \
 user.png \
@@ -38,4 +44,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    dbconnection.h
+    dbconnection.h \
+    user.h \
+    warehouse.h \
+    supplier.h \
+    importinfo.h \
+    goodinfo.h \
+    exportinfo.h

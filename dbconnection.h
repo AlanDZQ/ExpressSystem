@@ -13,8 +13,13 @@ public:
     ~DBConnection();
 
 public slots:
-    QList<QVariant> openTable();
     bool checkLogin(QString username, QString password);
+    QList<QVariant> openExportinfo();
+    QList<QVariant> openGoodinfo();
+    QList<QVariant> openImportinfo();
+    QList<QVariant> openSupplierinfo();
+    QList<QVariant> openUserinfo();
+    QList<QVariant> openWarehouseinfo();
 };
 
 

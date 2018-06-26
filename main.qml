@@ -13,8 +13,8 @@ ApplicationWindow {
 
     id: window
     visible: true
-    width: 640
-    height: 480
+    width: 800
+    height: 600
     title: qsTr("System")
 //    menuBar: MenuBar {
 //        Menu {
@@ -92,76 +92,76 @@ ApplicationWindow {
     }
 
     Timer{
-            id: overTimer
-            interval: 1000
-            repeat: false
-            onTriggered: {
-                upAnimation.start();
-                hideAnimation.start();
-            }
+        id: overTimer
+        interval: 1000
+        repeat: false
+        onTriggered: {
+            upAnimation.start();
+            hideAnimation.start();
         }
+    }
 
     PropertyAnimation{
-            id: showAnimation
-            target: subWindow
-            properties:"opacity"
-            from: 0.0
-            to: 1.0
-            duration: 500
-        }
+        id: showAnimation
+        target: subWindow
+        properties:"opacity"
+        from: 0.0
+        to: 1.0
+        duration: 500
+    }
 
-        PropertyAnimation{
-            id: hideAnimation
-            target: subWindow
-            properties:"opacity"
-            from: 1.0
-            to: 0.0
-            duration: 300
-            onStopped: {
-                subWindow.visible = false;
+    PropertyAnimation{
+        id: hideAnimation
+        target: subWindow
+        properties:"opacity"
+        from: 1.0
+        to: 0.0
+        duration: 300
+        onStopped: {
+            subWindow.visible = false;
+        }
+    }
+
+    PropertyAnimation{
+        id: downAnimation
+        target: subWindow
+        properties:"y"
+        duration: 300
+    }
+
+    PropertyAnimation{
+        id: upAnimation
+        target: subWindow
+        properties:"y"
+        duration: 300
+    }
+
+    Window{
+        flags: Qt.FramelessWindowHint
+        color: "#ffffff"
+        id: subWindow
+        visible: false
+        height: 200
+        width: 300
+        Text {
+            id: info
+            color: "#6C6C6C"
+            font.family: "Arial"
+            font.pixelSize: 20
+            horizontalAlignment: Qt.AlignHCenter
+            verticalAlignment: Qt.AlignVCenter
+            height: parent.height
+            width: parent.width
+        }
+        MouseArea{
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: {
+                overTimer.stop();
+            }
+            onExited: {
+                overTimer.start();
             }
         }
-
-        PropertyAnimation{
-            id: downAnimation
-            target: subWindow
-            properties:"y"
-            duration: 300
-        }
-
-        PropertyAnimation{
-            id: upAnimation
-            target: subWindow
-            properties:"y"
-            duration: 300
-        }
-
-        Window{
-            flags: Qt.FramelessWindowHint
-            color: "#ffffff"
-            id: subWindow
-            visible: false
-            height: 200
-            width: 300
-            Text {
-                id: info
-                color: "#6C6C6C"
-                font.family: "Arial"
-                font.pixelSize: 20
-                horizontalAlignment: Qt.AlignHCenter
-                verticalAlignment: Qt.AlignVCenter
-                height: parent.height
-                width: parent.width
-            }
-            MouseArea{
-                anchors.fill: parent
-                hoverEnabled: true
-                onEntered: {
-                    overTimer.stop();
-                }
-                onExited: {
-                    overTimer.start();
-                }
-            }
-        }
+    }
 }

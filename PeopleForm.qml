@@ -6,7 +6,7 @@ import QtQuick.Controls.Material 2.0
 
 Item {
     ListView {
-        id: peopleView
+        id: view
         anchors.topMargin: 50
         anchors.fill: parent
         contentWidth: headerItem.width
@@ -20,7 +20,7 @@ Item {
                 model: ["UserID", "Password", "Name", "Gender", "Age", "Privliege", "Salary", "Email", "Phone", "WagecardID"]
                 Label {
                     text: modelData
-                    color: "#ddffffff"
+                    color: "#ffffffff"
                     font.pixelSize: 20
                     padding: 10
                     width: 200
@@ -29,7 +29,7 @@ Item {
             }
         }
 
-        model: 100
+        model: dbconnection.openUserinfo().length
         delegate: Column {
             id: delegate
             property int row: index
@@ -39,8 +39,30 @@ Item {
                     model: 10
                     ItemDelegate {
                         property int column: index
-                        text: qsTr("%1x%2").arg(delegate.row).arg(column)
-                        width: peopleView.headerItem.itemAt(column).width
+                        width: view.headerItem.itemAt(column).width
+                        text: qsTr(getItem(delegate.row, column))
+                        function getItem(i, j){
+                            if(j===0)
+                                return dbconnection.openUserinfo()[i].getUserID
+                            if(j===1)
+                                return dbconnection.openUserinfo()[i].getPassword
+                            if(j===2)
+                                return dbconnection.openUserinfo()[i].getName
+                            if(j===3)
+                                return dbconnection.openUserinfo()[i].getGender
+                            if(j===4)
+                                return dbconnection.openUserinfo()[i].getAge.toString()
+                            if(j===5)
+                                return dbconnection.openUserinfo()[i].getPrivilege
+                            if(j===6)
+                                return dbconnection.openUserinfo()[i].getSalary.toString()
+                            if(j===7)
+                                return dbconnection.openUserinfo()[i].getEmail
+                            if(j===8)
+                                return dbconnection.openUserinfo()[i].getPhone
+                            if(j===9)
+                                return dbconnection.openUserinfo()[i].getWagecardID
+                        }
                     }
                 }
             }
@@ -109,9 +131,9 @@ Item {
             Image {
                 id: undoImage
                 x:parent.width/2-15
-                y:parent.height/2-15
+                y:parent.height/2-17
                 width: 30
-                height: 30
+                height: 34
                 source: "undo.png"
             }
         }
@@ -127,9 +149,9 @@ Item {
             Image {
                 id: redoImage
                 x:parent.width/2-15
-                y:parent.height/2-15
+                y:parent.height/2-17
                 width: 30
-                height: 30
+                height: 34
                 source: "redo.png"
             }
         }
@@ -178,17 +200,5 @@ Item {
             }
         }
     }
-    //通过value查找value2
-    function find(value1)
-    {
-        var rowCount = listModel.count;
-        for( var i = 0;i < rowCount;i++ ) {
-            var data = listModel.get(i);
-            if(data.value === value1) {
-                console.log(data.value2)
-            }
-        }
-    }
-
 }
 
