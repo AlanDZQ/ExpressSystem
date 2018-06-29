@@ -4,14 +4,25 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Material 2.0
 
 Item {
+    Component{
+        id:highlightrec
+        Rectangle{
+            color: "#DCDCDC"
+            radius: 5
+            border.color: "#FFFFFF"
+        }
+    }
     ListView {
         id: view
         anchors.topMargin: 50
         anchors.fill: parent
         contentWidth: headerItem.width
         flickableDirection: Flickable.HorizontalAndVerticalFlick
+        highlightFollowsCurrentItem: true
+        highlight: highlightrec
 
         header: Row {
+            z: 2
             spacing: 1
             function itemAt(index) { return headRepeater.itemAt(index) }
             Repeater {
@@ -27,12 +38,14 @@ Item {
                 }
             }
         }
+        headerPositioning: ListView.OverlayHeader
 
         model: dbconnection.openWarehouseinfo().length
         delegate: Column {
             id: delegate
             property int row: index
             Row {
+                z: 2
                 spacing: 1
                 Repeater {
                     model: 3
@@ -47,6 +60,10 @@ Item {
                                 return dbconnection.openWarehouseinfo()[i].getUserID
                             if(j===2)
                                 return dbconnection.openWarehouseinfo()[i].getAddress
+                        }
+                        highlighted: ListView.isCurrentItem
+                        onClicked: {
+                            view.currentIndex = delegate.row
                         }
                     }
                 }
@@ -169,17 +186,25 @@ Item {
             color: "#ffffffff"
             selectByMouse: true
             font.capitalization: Font.MixedCase
-            onEditingFinished: find()
+            onEditingFinished: {
+
+            }
         }
     }
 
-    //通过value查找value2
     function find(){
         var searchText = searchField.text
         for( var i = 0; i < 3; i++ ) {
             for( var j = 0; j < 100; j++ ) {
-                console.log(warehouseView.itemAt(j,i).text)
+                console.log(view.itemAt(j,i).text)
             }
         }
+    }
+
+    function getIndex(index){
+        if(index >= 12)
+            return index + 1
+        else
+            return index
     }
 }

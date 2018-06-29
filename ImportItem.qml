@@ -6,6 +6,7 @@ import QtQuick.Controls.Material 2.0
 Item {
     ToolBar {
         width: window.width
+        height: 50
         Material.background: "#20B2AA"
         RowLayout {
             anchors.fill: parent
@@ -16,18 +17,14 @@ Item {
                 onClicked: stackView.pop()
             }
             Label {
-                text: "Personal Information"
+                text: "Import Item Information"
                 elide: Label.ElideRight
                 horizontalAlignment: Qt.AlignHCenter
                 verticalAlignment: Qt.AlignVCenter
                 Layout.fillWidth: true
             }
-            ToolButton {
-                text: qsTr("⋮")
-                font.bold: true
-                font.pointSize: 20
-                onClicked: menu.open()
-            }
         }
     }
+
+
 }

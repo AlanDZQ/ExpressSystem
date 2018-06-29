@@ -14,7 +14,10 @@ public:
 
 public slots:
     bool checkLogin(QString username, QString password);
-    QList<QVariant> openExportinfo();
+    QList<QVariant> openExportInfo();
+    QList<QVariant> openExportGoodInfo();
+    QList<QVariant> openExportStatusInfo();
+
     QList<QVariant> openGoodinfo();
     QList<QVariant> openImportinfo();
     QList<QVariant> openSupplierinfo();

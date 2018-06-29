@@ -1,17 +1,28 @@
-import QtQuick 2.0
+import QtQuick 2.11
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Material 2.0
 
 Item {
+    Component{
+        id:highlightrec
+        Rectangle{
+            color: "#DCDCDC"
+            radius: 5
+            border.color: "#FFFFFF"
+        }
+    }
     ListView {
         id: view
         anchors.topMargin: 50
         anchors.fill: parent
         contentWidth: headerItem.width
         flickableDirection: Flickable.HorizontalAndVerticalFlick
+        highlightFollowsCurrentItem: true
+        highlight: highlightrec
 
         header: Row {
+            z: 2
             spacing: 1
             function itemAt(index) { return repeater.itemAt(index) }
             Repeater {
@@ -27,6 +38,7 @@ Item {
                 }
             }
         }
+        headerPositioning: ListView.OverlayHeader
 
         model: dbconnection.openGoodinfo().length
         delegate: Column {
@@ -53,6 +65,10 @@ Item {
                                 return dbconnection.openGoodinfo()[i].getPrice.toString()
                             if(j===5)
                                 return dbconnection.openGoodinfo()[i].getDescription
+                        }
+                        highlighted: ListView.isCurrentItem
+                        onClicked: {
+                            view.currentIndex = delegate.row
                         }
                     }
                 }
@@ -162,5 +178,29 @@ Item {
                 source: "save.png"
             }
         }
+
+        TextField {
+            id: searchField
+            x: parent.width - 200
+            height: 50
+            placeholderText: "Search"
+            clip: true
+            Material.accent: "#FFFFFF"
+            Material.foreground: "#008080"
+            color: "#ffffffff"
+            selectByMouse: true
+            font.capitalization: Font.MixedCase
+            onEditingFinished: {
+                for(var child in view.contentItem.children) {
+                    console.log(view.contentItem.children[child])
+                }
+            }
+        }
+    }
+    function getIndex(index){
+        if(index >= 12)
+            return index + 1
+        else
+            return index
     }
 }

@@ -1,22 +1,33 @@
-import QtQuick 2.0
+import QtQuick 2.11
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Material 2.0
 
 Item {
+    Component{
+        id:highlightrec
+        Rectangle{
+            color: "#DCDCDC"
+            radius: 5
+            border.color: "#FFFFFF"
+        }
+    }
     ListView {
         id: view
         anchors.topMargin: 50
         anchors.fill: parent
         contentWidth: headerItem.width
         flickableDirection: Flickable.HorizontalAndVerticalFlick
+        highlightFollowsCurrentItem: true
+        highlight: highlightrec
 
         header: Row {
+            z: 2
             spacing: 1
             function itemAt(index) { return repeater.itemAt(index) }
             Repeater {
                 id: repeater
-                model: ["EserialID", "Total Price", "Quality", "UserID", "Time", "Receive Name", "Receive Address", "Receive Phone", "Status", "Remark"]
+                model: ["EserialID", "Total Price", "Quality", "UserID", "Time", "Receive Name", "Receive Address", "Receive Phone", "Remark"]
                 Label {
                     text: modelData
                     color: "#ffffffff"
@@ -27,40 +38,43 @@ Item {
                 }
             }
         }
+        headerPositioning: ListView.OverlayHeader
 
-        model: dbconnection.openExportinfo().length
+        model: dbconnection.openExportInfo().length
         delegate: Column {
             id: delegate
             property int row: index
             Row {
                 spacing: 1
                 Repeater {
-                    model: 10
+                    model: 9
                     ItemDelegate {
                         property int column: index
                         width: view.headerItem.itemAt(column).width
-                        text: qsTr(getItem(delegate.row, column))
-                        function getItem(i, j){
+                        text: qsTr(getItem(delegate.row, column, dbconnection.openExportInfo()))
+                        function getItem(i, j, list){
                             if(j===0)
-                                return dbconnection.openExportinfo()[i].getEserialID
+                                return list[i].getEserialID
                             if(j===1)
-                                return dbconnection.openExportinfo()[i].getTotalprice.toString()
+                                return list[i].getTotalprice.toString()
                             if(j===2)
-                                return dbconnection.openExportinfo()[i].getQuality.toString()
+                                return list[i].getQuality.toString()
                             if(j===3)
-                                return dbconnection.openExportinfo()[i].getUserID
+                                return list[i].getUserID
                             if(j===4)
-                                return dbconnection.openExportinfo()[i].getTime.toString()
+                                return list[i].getTime.toString()
                             if(j===5)
-                                return dbconnection.openExportinfo()[i].getReceivename
+                                return list[i].getReceivename
                             if(j===6)
-                                return dbconnection.openExportinfo()[i].getReceiveaddress
+                                return list[i].getReceiveaddress
                             if(j===7)
-                                return dbconnection.openExportinfo()[i].getReceivephone
+                                return list[i].getReceivephone
                             if(j===8)
-                                return dbconnection.openExportinfo()[i].getStatus
-                            if(j===9)
-                                return dbconnection.openExportinfo()[i].getRremark
+                                return list[i].getRemark
+                        }
+                        highlighted: ListView.isCurrentItem
+                        onClicked: {
+                            view.currentIndex = delegate.row
                         }
                     }
                 }
@@ -76,7 +90,7 @@ Item {
         ScrollIndicator.vertical: ScrollIndicator { }
     }
     ToolBar {
-        id: exportToolBar
+        id: importToolBar
         x: 0
         y: 0
         width: parent.width
@@ -116,6 +130,9 @@ Item {
                 height: 30
                 source: "reduce.png"
             }
+            onClicked:{
+
+            }
         }
 
         ToolButton {
@@ -153,8 +170,9 @@ Item {
                 source: "redo.png"
             }
         }
+
         ToolButton {
-            id: saveButton
+            id: viewButton
             x: parent.width - 60
             width: 60
             height: parent.height
@@ -162,12 +180,26 @@ Item {
             autoExclusive: false
             focusPolicy: Qt.StrongFocus
             Image {
-                id:saveImage
-                x:parent.width/2-20
+                id: viewImage
+                x:parent.width/2-15
                 y:parent.height/2-15
-                width: 40
+                width: 30
                 height: 30
-                source: "save.png"
+                source: "view.png"
+            }
+            onClicked: {
+                if(!stackView.busy)
+                    homeStackView.push("ExportItem.qml",{
+                                           eserialID: getIndexItem(view.currentIndex+1).children[0].text,
+                                           totalPrice: getIndexItem(view.currentIndex+1).children[1].text,
+                                           quality: getIndexItem(view.currentIndex+1).children[2].text,
+                                           userID: getIndexItem(view.currentIndex+1).children[3].text,
+                                           time: getIndexItem(view.currentIndex+1).children[4].text,
+                                           receiveName: getIndexItem(view.currentIndex+1).children[5].text,
+                                           receiveAddress: getIndexItem(view.currentIndex+1).children[6].text,
+                                           receivePhone: getIndexItem(view.currentIndex+1).children[7].text,
+                                           remark: getIndexItem(view.currentIndex+1).children[8].text
+                                       })
             }
         }
 
@@ -182,6 +214,26 @@ Item {
             color: "#ffffffff"
             selectByMouse: true
             font.capitalization: Font.MixedCase
+            onEditingFinished: {
+
+            }
         }
+
+        ComboBox {
+            id: sortBox
+            x: parent.width - 400
+            width: 150
+            height: 50
+            Material.accent: "#008080"
+            Material.foreground: "#FFFFFF"
+            model: ["Default", "IserialID", "SupplierID", "GoodID", "Amount", "Total Price", "UserID", "Time"]
+        }
+    }
+
+    function getIndexItem(index){
+        if(index >= 12)
+            return view.contentItem.children[index+1].children[0]
+        else
+            return view.contentItem.children[index].children[0]
     }
 }

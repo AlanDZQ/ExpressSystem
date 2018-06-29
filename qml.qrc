@@ -12,5 +12,7 @@
         <file>PeopleForm.qml</file>
         <file>PersonalInfoForm.qml</file>
         <file>SupplierForm.qml</file>
+        <file>ImportItem.qml</file>
+        <file>ExportItem.qml</file>
     </qresource>
 </RCC>

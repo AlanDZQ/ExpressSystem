@@ -1,15 +1,15 @@
-#ifndef EXPORTINFO_H
-#define EXPORTINFO_H
+#ifndef EXPORT_H
+#define EXPORT_H
 #include<QSqlQuery>
 #include<QDebug>
 #include <QString>
 #include <QObject>
 #include<QDateTime>
 
-class Exportinfo : public QObject
+class Export : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString getEserialID READ getEserialID WRITE seteEserialID NOTIFY changed)
+    Q_PROPERTY(QString getEserialID READ getEserialID WRITE setEserialID NOTIFY changed)
     Q_PROPERTY(double getTotalprice READ getTotalprice WRITE setTotalprice NOTIFY changed)
     Q_PROPERTY(double getQuality READ getQuality WRITE setQuality NOTIFY changed)
     Q_PROPERTY(QString getUserID READ getUserID WRITE setUserID NOTIFY changed)
@@ -17,8 +17,7 @@ class Exportinfo : public QObject
     Q_PROPERTY(QString getReceivename READ getReceivename WRITE setReceivename NOTIFY changed)
     Q_PROPERTY(QString getReceiveaddress READ getReceiveaddress WRITE setReceiveaddress NOTIFY changed)
     Q_PROPERTY(QString getReceivephone READ getReceivephone WRITE setReceivephone NOTIFY changed)
-    Q_PROPERTY(QString getStatus READ getStatus WRITE setStatus NOTIFY changed)
-    Q_PROPERTY(QString getRremark READ getRremark WRITE setRemark NOTIFY changed)
+    Q_PROPERTY(QString getRemark READ getRemark WRITE setRemark NOTIFY changed)
 
 private:
     QString eserialID;
@@ -29,12 +28,11 @@ private:
     QString receivename;
     QString receiveaddress;
     QString receivephone;
-    QString status;
     QString remark;
 
 public:
-    explicit Exportinfo(QObject *parent = 0);
-    Exportinfo(QString eserialID,
+    explicit Export(QObject *parent = 0);
+    Export(QString eserialID,
     double totalprice,
     double quality,
     QString userID,
@@ -42,11 +40,10 @@ public:
     QString receivename,
     QString receiveaddress,
     QString receivephone,
-    QString status,
     QString remark):eserialID(eserialID),totalprice(totalprice),quality(quality),userID(userID),time(time),
-        receivename(receivename),receiveaddress(receiveaddress),receivephone(receivephone),status(status),remark(remark){}
+        receivename(receivename),receiveaddress(receiveaddress),receivephone(receivephone),remark(remark){}
 
-    void seteEserialID(QString eserialID) {
+    void setEserialID(QString eserialID) {
         this->eserialID = eserialID;
     }
     void setTotalprice(double totalprice){
@@ -70,9 +67,7 @@ public:
     void setReceivephone(QString receivephone){
         this->receivephone = receivephone;
     }
-    void setStatus(QString status){
-        this->status = status;
-    }
+
     void setRemark(QString remark){
         this->remark = remark;
     }
@@ -101,14 +96,12 @@ public:
     QString getReceivephone(){
         return this->receivephone;
     }
-    QString getStatus(){
-        return this->status;
-    }
-    QString getRremark(){
+
+    QString getRemark(){
         return this->remark;
     }
 
 signals:
     void changed(QVariant arg);
 };
-#endif // EXPORTINFO_H
+#endif // EXPORT_H

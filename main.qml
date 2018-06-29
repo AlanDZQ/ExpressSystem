@@ -1,14 +1,19 @@
-import QtQuick 2.9
+import QtQuick 2.11
 import QtQuick.Controls 2.4
 import QtQuick.Dialogs 1.0
 import QtQuick.Window 2.0
 import DBConnection 1.0
+import DBOperator 1.0
 import QtQuick.Controls.Material 2.0
 
 ApplicationWindow {
 
     DBConnection {
         id: dbconnection
+    }
+
+    DBOperator {
+        id: dboperator
     }
 
     id: window

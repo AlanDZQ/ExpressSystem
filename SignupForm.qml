@@ -13,6 +13,8 @@ Item {
         font.bold: false
         font.family: "Arial"
         spacing: 0
+        Material.background: "#20B2AA"
+        Material.foreground: "#FFFFFF"
         onClicked:stackView.pop()
     }
 

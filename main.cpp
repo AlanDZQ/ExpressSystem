@@ -3,6 +3,7 @@
 #include <QtQml>
 #include <QtSql>
 #include "dbconnection.h"
+#include "dboperator.h"
 
 int main(int argc, char *argv[])
 {
@@ -22,6 +23,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
     qmlRegisterType<DBConnection>("DBConnection",1,0,"DBConnection");
+    qmlRegisterType<DBOperator>("DBOperator",1,0,"DBOperator");
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())

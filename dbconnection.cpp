@@ -11,7 +11,9 @@
 #include "warehouse.h"
 #include "supplier.h"
 #include "goodinfo.h"
-#include "exportinfo.h"
+#include "export.h"
+#include "exportgood.h"
+#include "exportstatus.h"
 
 DBConnection::DBConnection(QObject *parent){}
 DBConnection::~DBConnection(){}
@@ -22,19 +24,45 @@ bool DBConnection::checkLogin(QString username, QString password){
     return query.next();
 }
 
-QList<QVariant> DBConnection::openExportinfo(){
+QList<QVariant> DBConnection::openExportInfo(){
     QList<QVariant> list = {};
     QSqlQuery query;
     query.exec("SELECT * FROM NEUSOFT1.EXPORT_INFO;");
     while(query.next()){
-        Exportinfo* ei = new Exportinfo(query.value(0).toString(), query.value(1).toDouble(), query.value(2).toDouble(),
+        Export* ei = new Export(query.value(0).toString(), query.value(1).toDouble(), query.value(2).toDouble(),
                                         query.value(3).toString(), query.value(4).toDateTime(), query.value(5).toString(),
-                                        query.value(6).toString(), query.value(7).toString(), query.value(8).toString(),
-                                        query.value(9).toString());
+                                        query.value(6).toString(), query.value(7).toString(), query.value(8).toString());
+
         list.append(QVariant::fromValue(ei));
     }
     return list;
 }
+
+QList<QVariant> DBConnection::openExportGoodInfo(){
+    QList<QVariant> list = {};
+    QSqlQuery query;
+    query.exec("SELECT * FROM NEUSOFT1.EXPORT_GOOD_INFO;");
+    while(query.next()){
+        ExportGood* eg = new ExportGood(query.value(0).toString(), query.value(1).toString(), query.value(2).toInt());
+
+        list.append(QVariant::fromValue(eg));
+    }
+    return list;
+}
+
+QList<QVariant> DBConnection::openExportStatusInfo(){
+    QList<QVariant> list = {};
+    QSqlQuery query;
+    query.exec("SELECT * FROM NEUSOFT1.EXPORT_STATUS_INFO;");
+    while(query.next()){
+        ExportStatus* es = new ExportStatus(query.value(0).toString(), query.value(1).toDateTime(), query.value(2).toString());
+
+        list.append(QVariant::fromValue(es));
+    }
+    return list;
+}
+
+// ↑ changed 2018年06月29日13:01:08
 
 QList<QVariant> DBConnection::openGoodinfo(){
     QList<QVariant> list = {};
@@ -97,3 +125,10 @@ QList<QVariant> DBConnection::openWarehouseinfo(){
     }
     return list;
 }
+
+
+
+
+
+
+

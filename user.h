@@ -29,7 +29,7 @@ private:
     QString wagecardID;
     QString gender;
     int age;
-    float salary;
+    double salary;
 
 public:
     explicit User(QObject *parent = 0);
@@ -39,7 +39,7 @@ public:
          QString gender,
          int age,
          QString privilege,
-         float salary,
+         double salary,
          QString email,
          QString phone,
          QString wagecardID) : email(email),password(password),name(name),privilege(privilege),userID(userID),
@@ -72,7 +72,7 @@ public:
     void setAge(int age){
         this->age = age;
     }
-    void setSalary(float salary){
+    void setSalary(double salary){
         this->salary = salary;
     }
 
@@ -103,7 +103,7 @@ public:
     int getAge(){
         return this->age;
     }
-    float getSalary(){
+    double getSalary(){
         return this->salary;
     }
 

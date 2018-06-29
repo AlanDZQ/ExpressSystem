@@ -1,5 +1,6 @@
 QT += quick \
  sql
+
 CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use
@@ -16,12 +17,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
     dbconnection.cpp \
+    dboperator.cpp \
     user.cpp \
     warehouse.cpp \
     supplier.cpp \
     importinfo.cpp \
     goodinfo.cpp \
-    exportinfo.cpp
+    export.cpp \
+    exportgood.cpp \
+    exportstatus.cpp
 
 RESOURCES += qml.qrc \
 user.png \
@@ -31,6 +35,7 @@ reduce.png \
 save.png \
 redo.png \
 undo.png \
+view.png \
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -45,9 +50,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     dbconnection.h \
+    dboperator.h \
     user.h \
     warehouse.h \
     supplier.h \
     importinfo.h \
     goodinfo.h \
-    exportinfo.h
+    export.h\
+    exportgood.h \
+    exportstatus.h \
