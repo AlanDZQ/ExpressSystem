@@ -30,6 +30,8 @@ private:
     QString gender;
     int age;
     double salary;
+    QString headPicURL;
+
 
 public:
     explicit User(QObject *parent = 0);
@@ -74,6 +76,14 @@ public:
     }
     void setSalary(double salary){
         this->salary = salary;
+    }
+    void setHeadPicURL(QString headPicURL){
+        this->headPicURL = headPicURL;
+    }
+
+
+    QString getHeadPicURL(){
+        return this->headPicURL;
     }
 
     QString getEmail(){

@@ -23,6 +23,7 @@ public slots:
     QList<QVariant> openSupplierinfo();
     QList<QVariant> openUserinfo();
     QList<QVariant> openWarehouseinfo();
+    QList<QVariant> openImportGoodinfo();
 };
 
 

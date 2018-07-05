@@ -1,11 +1,11 @@
-#ifndef GOODINFO_H
-#define GOODINFO_H
+#ifndef GOOD_H
+#define GOOD_H
 #include<QSqlQuery>
 #include<QDebug>
 #include <QString>
 #include <QObject>
 
-class Goodinfo : public QObject
+class Good : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString getGoodID READ getGoodID WRITE setGoodID NOTIFY changed)
@@ -26,8 +26,8 @@ private:
 
 
 public:
-    explicit Goodinfo(QObject *parent = 0);
-    Goodinfo(QString goodID,
+    explicit Good(QObject *parent = 0);
+    Good(QString goodID,
          QString warehouseID,
          QString supplierID,
          int amount,
@@ -78,4 +78,4 @@ signals:
     void changed(QVariant arg);
 };
 
-#endif // GOODINFO_H
+#endif // GOOD_H

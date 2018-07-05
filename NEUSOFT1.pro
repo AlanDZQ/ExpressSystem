@@ -21,8 +21,9 @@ SOURCES += \
     user.cpp \
     warehouse.cpp \
     supplier.cpp \
-    importinfo.cpp \
-    goodinfo.cpp \
+    import.cpp \
+    good.cpp \
+    importgood.cpp \
     export.cpp \
     exportgood.cpp \
     exportstatus.cpp
@@ -54,8 +55,9 @@ HEADERS += \
     user.h \
     warehouse.h \
     supplier.h \
-    importinfo.h \
-    goodinfo.h \
+    import.h \
+    good.h \
+    importgood.h \
     export.h\
     exportgood.h \
     exportstatus.h \

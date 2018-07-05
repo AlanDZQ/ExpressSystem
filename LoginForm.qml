@@ -43,7 +43,6 @@ Item {
                     showAnimation.start();
                     overTimer.start();
                 }
-
             }
         }
 

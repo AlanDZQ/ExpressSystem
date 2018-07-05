@@ -3,16 +3,43 @@
 #include <QObject>
 #include <QList>
 
+#include "dbconnection.h"
+#include "dboperator.h"
+#include "user.h"
+#include "import.h"
+#include "warehouse.h"
+#include "supplier.h"
+#include "good.h"
+#include "export.h"
+#include "exportgood.h"
+#include "exportstatus.h"
+#include "importgood.h"
 
 class DBOperator : public QObject
 {
     Q_OBJECT
+private:
+    QString savedOperation;
+    int lastClassNum;
+    bool undoState = true;
+
+    QList<QString> undoData;
+
 
 public:
     explicit DBOperator(QObject *parent = 0);
     ~DBOperator();
 
+
+
+
+
 public slots:
+
+
+    void saveOperation(QString lastSQL);
+    void undo();
+    void redo();
     //-----------------------------------------------  adder ------------------------------------------------------
 
     void addUserinfo(QString userID,
@@ -32,7 +59,6 @@ public slots:
                        QString totalprice,
                        QString quality,
                        QString userID,
-                       QString time,
                        QString receivename,
                        QString receiveaddress,
                        QString receivephone,
@@ -55,8 +81,6 @@ public slots:
 
     void addImportinfo(QString iserialID,
                        QString supplierID,
-                       QString goodID,
-                       QString amount,
                        QString totalprice,
                        QString userID,
                        QString time);
@@ -70,6 +94,10 @@ public slots:
     void addWarehouseinfo(QString warehouseID,
                           QString userID,
                           QString address);
+
+    void addImportGoodinfo(QString iserialID,
+                                       QString goodID,
+                                       QString amount);
     //-----------------------------------------------  adder  end ------------------------------------------------------
 
     //-----------------------------------------------  deleter ------------------------------------------------------
@@ -78,7 +106,7 @@ public slots:
 
     void delExport(QString eserialID);
 
-    void delGoodinfo(QString goodID);
+    void delGoodinfo(QString goodID, QString warehouseID);
 
     void delImportinfo(QString iserialID);
 
@@ -91,14 +119,14 @@ public slots:
     void delExportStatus(QString eserialID,
                          QString goodID);
 
+    void delImportGoodinfo(QString iserialID, QString goodID);
+
     //-----------------------------------------------  deleter end ------------------------------------------------------
 
     //-----------------------------------------------  editor  ------------------------------------------------------
 
     void editImportinfo(QString iserialID,
                         QString supplierID,
-                        QString goodID,
-                        QString amount,
                         QString totalprice,
                         QString userID,
                         QString time);
@@ -118,7 +146,6 @@ public slots:
                        QString totalprice,
                        QString quality,
                        QString userID,
-                       QString time,
                        QString receivename,
                        QString receiveaddress,
                        QString receivephone,
@@ -148,14 +175,33 @@ public slots:
                           QString userID,
                           QString address);
 
+    void editImportGoodinfo(QString iserialID,
+                                        QString goodID,
+                                        QString amount);
+
 
     //-----------------------------------------------  editor end ------------------------------------------------------
 
-    QList<QVariant>  searchExport(QString colName, QString theOne);
+    QList<QVariant>  searchExport(QString theOne);
+    QList<QVariant> searchExportGood(  QString theOne);
+    QList<QVariant> searchExportStatus( QString theOne);
+    QList<QVariant> searchGood( QString theOne);
+    QList<QVariant> searchImport( QString theOne);
+    QList<QVariant> searchImportGood( QString theOne);
+    QList<QVariant> searchSupplier( QString theOne);
+    QList<QVariant> searchUser( QString theOne);
+    QList<QVariant> searchWarehouse( QString theOne);
 
-    QList<QVariant> searchExportGood(QString colName, QString theOne);
 
-    QList<QVariant> searchExportStatus(QString colName, QString theOne);
+    QList<QVariant>  sortExport(QString colName, bool asc = true );
+    QList<QVariant> sortExportGood(QString colName, bool asc = true);
+    QList<QVariant> sortExportStatus(QString colName,  bool asc = true);
+    QList<QVariant> sortGood(QString colName,  bool asc = true);
+    QList<QVariant> sortImport(QString colName, bool asc = true);
+    QList<QVariant> sortImportGood(QString colName,  bool asc = true);
+    QList<QVariant> sortSupplier(QString colName,  bool asc = true);
+    QList<QVariant> sortUser(QString colName, bool asc = true);
+    QList<QVariant> sortWarehouse(QString colName,  bool asc = true);
 
 };
 

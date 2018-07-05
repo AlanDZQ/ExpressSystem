@@ -13,7 +13,6 @@ class Export : public QObject
     Q_PROPERTY(double getTotalprice READ getTotalprice WRITE setTotalprice NOTIFY changed)
     Q_PROPERTY(double getQuality READ getQuality WRITE setQuality NOTIFY changed)
     Q_PROPERTY(QString getUserID READ getUserID WRITE setUserID NOTIFY changed)
-    Q_PROPERTY(QDateTime getTime READ getTime WRITE setTime NOTIFY changed)
     Q_PROPERTY(QString getReceivename READ getReceivename WRITE setReceivename NOTIFY changed)
     Q_PROPERTY(QString getReceiveaddress READ getReceiveaddress WRITE setReceiveaddress NOTIFY changed)
     Q_PROPERTY(QString getReceivephone READ getReceivephone WRITE setReceivephone NOTIFY changed)
@@ -24,7 +23,6 @@ private:
     double totalprice;
     double quality;
     QString userID;
-    QDateTime time;
     QString receivename;
     QString receiveaddress;
     QString receivephone;
@@ -36,11 +34,10 @@ public:
     double totalprice,
     double quality,
     QString userID,
-    QDateTime time,
     QString receivename,
     QString receiveaddress,
     QString receivephone,
-    QString remark):eserialID(eserialID),totalprice(totalprice),quality(quality),userID(userID),time(time),
+    QString remark):eserialID(eserialID),totalprice(totalprice),quality(quality),userID(userID),
         receivename(receivename),receiveaddress(receiveaddress),receivephone(receivephone),remark(remark){}
 
     void setEserialID(QString eserialID) {
@@ -51,9 +48,6 @@ public:
     }
     void setQuality(double quality){
         this->quality = quality;
-    }
-    void setTime(QDateTime time){
-        this->time = time;
     }
     void setUserID(QString userID){
         this->userID = userID;
@@ -80,9 +74,6 @@ public:
     }
     double getQuality(){
         return this->quality;
-    }
-    QDateTime getTime(){
-        return this->time;
     }
     QString getUserID(){
         return this->userID;

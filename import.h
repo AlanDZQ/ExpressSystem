@@ -1,18 +1,16 @@
-#ifndef IMPORTINFO_H
-#define IMPORTINFO_H
+#ifndef IMPORT_H
+#define IMPORT_H
 #include<QSqlQuery>
 #include<QDebug>
 #include <QString>
 #include <QObject>
 #include<QDate>
 
-class Importinfo : public QObject
+class Import : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString getIserialID READ getIserialID WRITE setIserialID NOTIFY changed)
     Q_PROPERTY(QString getSupplierID READ getSupplierID WRITE setSupplierID NOTIFY changed)
-    Q_PROPERTY(QString getGoodID READ getGoodID WRITE setGoodID NOTIFY changed)
-    Q_PROPERTY(int getAmount READ getAmount WRITE setAmount NOTIFY changed)
     Q_PROPERTY(QString getUserID READ getUserID WRITE setUserID NOTIFY changed)
     Q_PROPERTY(double getTotalprice READ getTotalprice WRITE setTotalprice NOTIFY changed)
     Q_PROPERTY(QDateTime getTime READ getTime WRITE setTime NOTIFY changed)
@@ -21,21 +19,17 @@ class Importinfo : public QObject
 private:
     QString iserialID;
     QString supplierID;
-    QString goodID;
-    int amount;
     double totalprice;
     QString userID;
     QDateTime time;
 
 public:
-    explicit Importinfo(QObject *parent = 0);
-    Importinfo(QString iserialID,
+    explicit Import(QObject *parent = 0);
+    Import(QString iserialID,
          QString supplierID,
-         QString goodID,
-         int amount,
          double totalprice,
          QString userID,
-         QDateTime time) : iserialID(iserialID),supplierID(supplierID),goodID(goodID),amount(amount),totalprice(totalprice),
+         QDateTime time) : iserialID(iserialID),supplierID(supplierID),totalprice(totalprice),
         userID(userID),time(time){}
 
     void setIserialID(QString iserialID) {
@@ -43,12 +37,6 @@ public:
     }
     void setSupplierID(QString supplierID){
         this->supplierID = supplierID;
-    }
-    void setGoodID(QString goodID){
-        this->goodID = goodID;
-    }
-    void setAmount(int amount){
-        this->amount = amount;
     }
     void setUserID(QString userID){
         this->userID = userID;
@@ -66,12 +54,6 @@ public:
     QString getSupplierID(){
         return this->supplierID;
     }
-    QString getGoodID(){
-        return this->goodID;
-    }
-    int getAmount(){
-        return this->amount;
-    }
     QString getUserID(){
         return this->userID;
     }
@@ -86,4 +68,4 @@ signals:
     void changed(QVariant arg);
 
 };
-#endif // IMPORTINFO_H
+#endif // IMPORT_H

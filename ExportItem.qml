@@ -2,13 +2,14 @@ import QtQuick 2.11
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Material 2.0
+import QtGraphicalEffects 1.0
 
 Item {
+    id: exportItem
     property string eserialID: ""
     property string totalPrice: ""
     property string quality: ""
     property string userID: ""
-    property string time: ""
     property string receiveName: ""
     property string receiveAddress: ""
     property string receivePhone: ""
@@ -35,27 +36,133 @@ Item {
                 verticalAlignment: Qt.AlignVCenter
                 Layout.fillWidth: true
             }
+            ToolButton {
+                focusPolicy: Qt.StrongFocus
+                width: 60
+                height: parent.height
+                Image {
+                    id: viewImage
+                    x:parent.width/2-20
+                    y:parent.height/2-15
+                    width: 40
+                    height: 30
+                    source: "save.png"
+                }
+                onClicked: {
+                    if(totalPriceField.text===""||qualityField.text===""||userIDField.text===""
+                            ||receiveNameField.text===""||receiveAddressField.text===""||receivePhoneField.text===""
+                            ||remarkField.text===""){
+                        warning3.visible=true
+                    }else{
+                        dboperator.editExport(eserialID,totalPriceField.text,qualityField.text,userIDField.text,
+                                              receiveNameField.text,receiveAddressField.text,receivePhoneField.text,
+                                              remarkField.text)
+                        homeStackView.pop()
+                        homeStackView.push("ExportForm.qml")
+                        overTimer.stop();
+                        if (subWindow.visible === true) return;
+                        info.text = "Saved successfully!"
+                        subWindow.opacity = 0.0;
+                        subWindow.visible = true;
+                        downAnimation.start();
+                        showAnimation.start();
+                        overTimer.start();
+                    }
+                }
+            }
         }
     }
 
-    Component{
-        id:highlightrec
-        Rectangle{
-            color: "#DCDCDC"
-            radius: 5
-            border.color: "#FFFFFF"
+
+
+    ListModel {
+        id: model1
+        Component.onCompleted: refresh1()
+    }
+
+    function refresh1(){
+        model1.clear()
+        for(var i = 0; i < dboperator.searchExportGood(eserialID).length; i++){
+            model1.append({"goodID": dboperator.searchExportGood(eserialID)[i].getGoodID,
+                           "amount": dboperator.searchExportGood(eserialID)[i].getAmount.toString()})
+        }
+    }
+
+    Component {
+        id: delegate1
+        Column {
+            id: column1
+            property int row: index
+            Row {
+                spacing: 1
+                ItemDelegate {
+                    width: view1.headerItem.itemAt(0).width
+                    text: goodID
+                }
+                ItemDelegate {
+                    width: view1.headerItem.itemAt(1).width
+                    text: amount
+                    MouseArea {
+                        anchors.fill: parent;
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+                        onClicked: {
+                            view1.currentIndex = column1.row
+                            if (mouse.button === Qt.RightButton) {
+                                contentMenu1.popup()
+                            }else{
+                                popup1.open()
+                            }
+                        }
+                    }
+
+                    Menu {
+                        id: contentMenu1
+                        MenuItem {
+                            text: "Add"
+                            onTriggered: {
+                                addPopup1.open()
+                            }
+                        }
+                        MenuItem {
+                            text: "Delete"
+                            onTriggered: {
+                                dboperator.delExportGood(eserialID, model1.get(view1.currentIndex).goodID)
+                                refresh1()
+                            }
+                        }
+                        MenuSeparator {}
+                        MenuItem {
+                            text: "Undo"
+                            onTriggered: {
+                                refresh1()
+                            }
+                        }
+                        MenuItem {
+                            text: "Redo"
+                            onTriggered: {
+                                refresh1()
+                            }
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                color: "silver"
+                width: view1.headerItem.width
+                height: 1
+            }
         }
     }
 
     ListView {
         id: view1
         anchors.topMargin: 50
-        anchors.rightMargin: parent.width - view1.headerItem.width
         anchors.fill: parent
         contentWidth: headerItem.width
-        flickableDirection: Flickable.HorizontalAndVerticalFlick
+        flickableDirection: Flickable.VerticalFlick
         highlightFollowsCurrentItem: true
-        highlight: highlightrec
 
         header: Row {
             z: 2
@@ -69,59 +176,390 @@ Item {
                     color: "#ffffffff"
                     font.pixelSize: 20
                     padding: 10
-                    width: 100
+                    width: exportItem.width/6
                     background: Rectangle { color: "#20B2AA"}
-                }
-            }
-        }
-        headerPositioning: ListView.OverlayHeader
+                    MouseArea {
+                        property point clickPoint: "0,0"
 
-        model: dboperator.searchExportGood("eserialid", eserialID).length
-        delegate: Column {
-            id: delegate1
-            property int row: index
-            Row {
-                spacing: 1
-                Repeater {
-                    model: 2
-                    ItemDelegate {
-                        property int column: index
-                        width: view1.headerItem.itemAt(column).width
-                        text: qsTr(getItem(delegate1.row, column, dboperator.searchExportGood("eserialid", eserialID)))
-                        function getItem(i, j, list){
-                            if(j===0)
-                                return list[i].getGoodID
-                            if(j===1)
-                                return list[i].getAmount.toString()
+                        anchors.fill: parent
+                        acceptedButtons: Qt.LeftButton
+                        onPressed: {
+                            clickPoint  = Qt.point(mouse.x, mouse.y)
+                            parent.parent.parent.parent.flickableDirection = Flickable.VerticalFlick
                         }
-                        highlighted: ListView.isCurrentItem
-                        onClicked: {
-                            view1.currentIndex = delegate1.row
+                        onReleased: parent.parent.parent.parent.flickableDirection = Flickable.HorizontalAndVerticalFlick
+                        onPositionChanged: {
+                            var offset = Qt.point(mouse.x - clickPoint.x, mouse.y - clickPoint.y)
+                            setDlgPoint(offset.x, offset.y)
+                        }
+                        function setDlgPoint(dlgX) {
+                            if(width>=50||dlgX>0)
+                                parent.width = parent.width + dlgX/100
                         }
                     }
                 }
             }
-            Rectangle {
-                color: "silver"
-                width: parent.width
-                height: 1
+        }
+        headerPositioning: ListView.OverlayHeader
+        model: model1
+        delegate: delegate1
+        ScrollIndicator.horizontal: ScrollIndicator { }
+        ScrollIndicator.vertical: ScrollIndicator { }
+    }
+
+    Popup {
+        id: popup1
+        x: parent.width/2 - popup1.width/2
+        y: parent.height/2 - popup1.height/2
+        width: 530
+        height: 300
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        Text {
+            width: parent.width
+            height: 40
+            anchors.top: parent.top
+            text:  model1.get(view1.currentIndex).goodID
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+
+            MouseArea {
+                property point clickPoint: "0,0"
+
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton
+                onPressed: {
+                    clickPoint  = Qt.point(mouse.x, mouse.y)
+                }
+                onPositionChanged: {
+                    var offset = Qt.point(mouse.x - clickPoint.x, mouse.y - clickPoint.y)
+                    setDlgPoint(offset.x, offset.y)
+                }
+                function setDlgPoint(dlgX ,dlgY)
+                {
+                    //设置窗口拖拽不能超过父窗口
+                    if(popup1.x + dlgX < 0){
+                        popup1.x = 0
+                    }
+                    else if(popup1.x + dlgX > popup1.parent.width - popup1.width){
+                        popup1.x = popup1.parent.width - popup1.width
+                    }
+                    else{
+                        popup1.x = popup1.x + dlgX
+                    }
+                    if(popup1.y + dlgY < 0){
+                        popup1.y = 0
+                    }
+                    else if(popup1.y + dlgY > popup1.parent.height - popup1.height){
+                        popup1.y = popup1.parent.height - popup1.height
+                    }
+                    else{
+                        popup1.y = popup1.y + dlgY
+                    }
+                }
             }
         }
 
-        ScrollIndicator.horizontal: ScrollIndicator { }
-        ScrollIndicator.vertical: ScrollIndicator { }
+
+        Label {
+            id: warning1
+            x: parent.width/2 - 125
+            y: parent.height/2 - 50
+            width: 250
+            height: 50
+            Material.accent: "#20B2AA"
+            clip: true
+            color: "#20B2AA"
+            text: "TextField cannot be null"
+            visible: false
+        }
+
+
+        TextField {
+            id: textField1
+            x: parent.width/2 - 125
+            y: parent.height/2
+            width: 250
+            height: 50
+            Material.accent: "#20B2AA"
+            clip: true
+            selectByMouse: true
+            text: model1.get(view1.currentIndex).amount
+        }
+
+        Button {
+            x: 103
+            y: 204
+            text: "ok"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                if(textField1.text === "")
+                    warning1.visible = true
+                else{
+                    warning1.visible = false
+                    dboperator.editExportGood(eserialID, model1.get(view1.currentIndex).goodID, textField1.text)
+                    popup1.close()
+                    refresh1()
+                }
+            }
+        }
+
+        Button {
+            x: 341
+            y: 204
+            text: "cancel"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                popup1.close()
+            }
+        }
+    }
+
+
+    Popup {
+        id: addPopup1
+        x: parent.width/2 - addPopup1.width/2
+        y: parent.height/2 - addPopup1.height/2
+        width: 530
+        height: 300
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        Text {
+            width: parent.width
+            height: 40
+            anchors.top: parent.top
+            text:  "Add new good"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+
+            MouseArea {
+                property point clickPoint: "0,0"
+
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton
+                onPressed: {
+                    clickPoint  = Qt.point(mouse.x, mouse.y)
+                }
+                onPositionChanged: {
+                    var offset = Qt.point(mouse.x - clickPoint.x, mouse.y - clickPoint.y)
+                    setDlgPoint(offset.x, offset.y)
+                }
+                function setDlgPoint(dlgX ,dlgY)
+                {
+                    //设置窗口拖拽不能超过父窗口
+                    if(addPopup1.x + dlgX < 0){
+                        addPopup1.x = 0
+                    }
+                    else if(addPopup1.x + dlgX > addPopup1.parent.width - addPopup1.width){
+                        addPopup1.x = addPopup1.parent.width - addPopup1.width
+                    }
+                    else{
+                        addPopup1.x = addPopup1.x + dlgX
+                    }
+                    if(addPopup1.y + dlgY < 0){
+                        addPopup1.y = 0
+                    }
+                    else if(addPopup1.y + dlgY > addPopup1.parent.height - addPopup1.height){
+                        addPopup1.y = addPopup1.parent.height - addPopup1.height
+                    }
+                    else{
+                        addPopup1.y = addPopup1.y + dlgY
+                    }
+                }
+            }
+        }
+
+
+        Label {
+            id: addWarning1
+            x: parent.width/2 - 125
+            y: parent.height/2 - 75
+            width: 250
+            height: 50
+            Material.accent: "#20B2AA"
+            clip: true
+            color: "#20B2AA"
+            text: "TextField cannot be null"
+            visible: false
+        }
+
+
+        TextField {
+            id: addField1
+            x: parent.width/2 - 125
+            y: parent.height/2 - 50
+            width: 250
+            height: 50
+            Material.accent: "#20B2AA"
+            clip: true
+            selectByMouse: true
+            placeholderText: "Enter the good's ID"
+        }
+
+        TextField {
+            id: addField2
+            x: parent.width/2 - 125
+            y: parent.height/2
+            width: 250
+            height: 50
+            Material.accent: "#20B2AA"
+            clip: true
+            selectByMouse: true
+            placeholderText: "Enter the amount"
+        }
+
+        Button {
+            x: 103
+            y: 204
+            text: "ok"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                if(addField1.text === ""||addField2.text==="")
+                    addWarning1.visible = true
+                else{
+                    dboperator.addExportGood(eserialID, addField1.text, addField2.text)
+                    addWarning1.visible = false
+                    addPopup1.close()
+                    refresh1()
+                }
+            }
+        }
+
+        Button {
+            x: 341
+            y: 204
+            text: "cancel"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                addPopup1.close()
+            }
+        }
+    }
+
+    Rectangle {
+        color: "silver"
+        x: exportItem.width/3
+        width: 1
+        height: exportItem.height
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ListModel {
+        id: model2
+        Component.onCompleted: refresh2()
+    }
+
+    function refresh2(){
+        model2.clear()
+        for(var i = 0; i < dboperator.searchExportStatus(eserialID).length; i++){
+            model2.append({"time": Qt.formatDateTime(dboperator.searchExportStatus(eserialID)[i].getTime, "yyyy-MM-dd hh:mm:ss").toString(),
+                           "status": dboperator.searchExportStatus(eserialID)[i].getStatus})
+        }
+    }
+
+    Component {
+        id: delegate2
+        Column {
+            id: column2
+            property int row: index
+            Row {
+                spacing: 1
+                ItemDelegate {
+                    width: view2.headerItem.itemAt(0).width
+                    text: time
+                }
+                ItemDelegate {
+                    width: view2.headerItem.itemAt(1).width
+                    text: status
+                    MouseArea {
+                        anchors.fill: parent;
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+                        onClicked: {
+                            view1.currentIndex = column2.row
+                            if (mouse.button === Qt.RightButton) {
+                                contentMenu2.popup()
+                            }else{
+                                popup2.open()
+                            }
+                        }
+                    }
+
+                    Menu {
+                        id: contentMenu2
+                        MenuItem {
+                            text: "Add"
+                            onTriggered: {
+                                addPopup2.open()
+                            }
+                        }
+                        MenuItem {
+                            text: "Delete"
+                            onTriggered: {
+                                dboperator.delExportGood(eserialID, model2.get(view2.currentIndex).time)
+                                refresh2()
+                            }
+                        }
+                        MenuSeparator {}
+                        MenuItem {
+                            text: "Undo"
+                            onTriggered: {
+                                refresh2()
+                            }
+                        }
+                        MenuItem {
+                            text: "Redo"
+                            onTriggered: {
+                                refresh2()
+                            }
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                color: "silver"
+                width: view2.headerItem.width
+                height: 1
+            }
+        }
     }
 
     ListView {
         id: view2
         anchors.topMargin: 50
-        anchors.leftMargin: view1.width
-        anchors.rightMargin:  parent.width - view1.headerItem.width - view2.headerItem.width
+        anchors.leftMargin: exportItem.width*1/3
         anchors.fill: parent
         contentWidth: headerItem.width
-        flickableDirection: Flickable.HorizontalAndVerticalFlick
+        flickableDirection: Flickable.VerticalFlick
         highlightFollowsCurrentItem: true
-        highlight: highlightrec
 
         header: Row {
             z: 2
@@ -135,48 +573,485 @@ Item {
                     color: "#ffffffff"
                     font.pixelSize: 20
                     padding: 10
-                    width: 100
+                    width: exportItem.width/6
                     background: Rectangle { color: "#20B2AA"}
-                }
-            }
-        }
-        headerPositioning: ListView.OverlayHeader
+                    MouseArea {
+                        property point clickPoint: "0,0"
 
-        model: dboperator.searchExportStatus("eserialid", eserialID).length
-        delegate: Column {
-            id: delegate2
-            property int row: index
-            Row {
-                spacing: 1
-                Repeater {
-                    model: 2
-                    ItemDelegate {
-                        property int column: index
-                        width: view2.headerItem.itemAt(column).width
-                        text: qsTr(getItem(delegate2.row, column, dboperator.searchExportStatus("eserialid", eserialID)))
-                        function getItem(i, j, list){
-                            if(j===0)
-                                return list[i].getTime.toString()
-                            if(j===1)
-                                return list[i].getStatus
+                        anchors.fill: parent
+                        acceptedButtons: Qt.LeftButton
+                        onPressed: {
+                            clickPoint  = Qt.point(mouse.x, mouse.y)
+                            parent.parent.parent.parent.flickableDirection = Flickable.VerticalFlick
                         }
-                        highlighted: ListView.isCurrentItem
-                        onClicked: {
-                            view2.currentIndex = delegate2.row
+                        onReleased: parent.parent.parent.parent.flickableDirection = Flickable.HorizontalAndVerticalFlick
+                        onPositionChanged: {
+                            var offset = Qt.point(mouse.x - clickPoint.x, mouse.y - clickPoint.y)
+                            setDlgPoint(offset.x, offset.y)
+                        }
+                        function setDlgPoint(dlgX) {
+                            if(width>=50||dlgX>0)
+                                parent.width = parent.width + dlgX/100
                         }
                     }
                 }
             }
-            Rectangle {
-                color: "silver"
-                width: parent.width
-                height: 1
-            }
         }
-
+        headerPositioning: ListView.OverlayHeader
+        model: model2
+        delegate: delegate2
         ScrollIndicator.horizontal: ScrollIndicator { }
         ScrollIndicator.vertical: ScrollIndicator { }
     }
 
 
+    Popup {
+        id: popup2
+        x: parent.width/2 - popup2.width/2
+        y: parent.height/2 - popup2.height/2
+        width: 530
+        height: 300
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        Text {
+            width: parent.width
+            height: 40
+            anchors.top: parent.top
+            text: model2.get(view2.currentIndex).time
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+
+            MouseArea {
+                property point clickPoint: "0,0"
+
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton
+                onPressed: {
+                    clickPoint  = Qt.point(mouse.x, mouse.y)
+                }
+                onPositionChanged: {
+                    var offset = Qt.point(mouse.x - clickPoint.x, mouse.y - clickPoint.y)
+                    setDlgPoint(offset.x, offset.y)
+                }
+                function setDlgPoint(dlgX ,dlgY)
+                {
+                    //设置窗口拖拽不能超过父窗口
+                    if(popup2.x + dlgX < 0){
+                        popup2.x = 0
+                    }
+                    else if(popup2.x + dlgX > popup2.parent.width - popup2.width){
+                        popup2.x = popup2.parent.width - popup2.width
+                    }
+                    else{
+                        popup2.x = popup2.x + dlgX
+                    }
+                    if(popup2.y + dlgY < 0){
+                        popup2.y = 0
+                    }
+                    else if(popup2.y + dlgY > popup2.parent.height - popup2.height){
+                        popup2.y = popup2.parent.height - popup2.height
+                    }
+                    else{
+                        popup2.y = popup2.y + dlgY
+                    }
+                }
+            }
+        }
+
+        Label {
+            id: warning2
+            x: parent.width/2 - 125
+            y: parent.height/2 - 50
+            width: 250
+            height: 50
+            Material.accent: "#20B2AA"
+            clip: true
+            color: "#20B2AA"
+            text: "TextField cannot be null"
+            visible: false
+        }
+
+
+        TextField {
+            id: textField2
+            x: parent.width/2 - 125
+            y: parent.height/2
+            width: 250
+            height: 50
+            Material.accent: "#20B2AA"
+            clip: true
+            selectByMouse: true
+            text: model2.get(view2.currentIndex).status
+        }
+
+        Button {
+            x: 103
+            y: 204
+            text: "ok"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                if(textField2.text == "")
+                    warning2.visible = true
+                else{
+                    warning2.visible = false
+                    dboperator.editExportStatus(eserialID, model2.get(view2.currentIndex).time,textField2.text)
+                    popup2.close()
+                    refresh2()
+
+                }
+            }
+        }
+
+        Button {
+            x: 341
+            y: 204
+            text: "cancel"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                popup2.close()
+            }
+        }
+    }
+
+
+    Popup {
+        id: addPopup2
+        x: parent.width/2 - addPopup2.width/2
+        y: parent.height/2 - addPopup2.height/2
+        width: 530
+        height: 300
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        Text {
+            width: parent.width
+            height: 40
+            anchors.top: parent.top
+            text:  "Add new status"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+
+            MouseArea {
+                property point clickPoint: "0,0"
+
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton
+                onPressed: {
+                    clickPoint  = Qt.point(mouse.x, mouse.y)
+                }
+                onPositionChanged: {
+                    var offset = Qt.point(mouse.x - clickPoint.x, mouse.y - clickPoint.y)
+                    setDlgPoint(offset.x, offset.y)
+                }
+                function setDlgPoint(dlgX ,dlgY)
+                {
+                    //设置窗口拖拽不能超过父窗口
+                    if(addPopup2.x + dlgX < 0){
+                        addPopup2.x = 0
+                    }
+                    else if(addPopup2.x + dlgX > addPopup2.parent.width - addPopup2.width){
+                        addPopup2.x = addPopup2.parent.width - addPopup2.width
+                    }
+                    else{
+                        addPopup2.x = addPopup2.x + dlgX
+                    }
+                    if(addPopup2.y + dlgY < 0){
+                        addPopup2.y = 0
+                    }
+                    else if(addPopup2.y + dlgY > addPopup2.parent.height - addPopup2.height){
+                        addPopup2.y = addPopup2.parent.height - addPopup2.height
+                    }
+                    else{
+                        addPopup2.y = addPopup2.y + dlgY
+                    }
+                }
+            }
+        }
+
+
+        Label {
+            id: addWarning2
+            x: parent.width/2 - 125
+            y: parent.height/2 - 75
+            width: 250
+            height: 50
+            Material.accent: "#20B2AA"
+            clip: true
+            color: "#20B2AA"
+            text: "TextField cannot be null"
+            visible: false
+        }
+
+
+        TextField {
+            id: addField3
+            x: parent.width/2 - 125
+            y: parent.height/2 - 50
+            width: 250
+            height: 50
+            Material.accent: "#20B2AA"
+            clip: true
+            selectByMouse: true
+            placeholderText: "Enter the time (yyyy-MM-dd hh:mm:ss)"
+        }
+
+        TextField {
+            id: addField4
+            x: parent.width/2 - 125
+            y: parent.height/2
+            width: 250
+            height: 50
+            Material.accent: "#20B2AA"
+            clip: true
+            selectByMouse: true
+            placeholderText: "Enter the status"
+        }
+
+        Button {
+            x: 103
+            y: 204
+            text: "ok"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                if(addField3.text === ""||addField4.text==="")
+                    addWarning2.visible = true
+                else{
+                    dboperator.addExportStatus(eserialID, addField3.text, addField4.text)
+                    addWarning2.visible = false
+                    addPopup2.close()
+                    refresh2()
+                }
+            }
+        }
+
+        Button {
+            x: 341
+            y: 204
+            text: "cancel"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                addPopup2.close()
+            }
+        }
+    }
+
+    Rectangle {
+        x: exportItem.width*2/3
+        width: exportItem.width/3
+        height: exportItem.height
+        color: "#FAFAFA"
+
+        Label {
+            id: warning3
+            x: parent.width/2 - 100
+            y: 50
+            width: 200
+            height: 50
+            Material.accent: "#20B2AA"
+            clip: true
+            color: "#20B2AA"
+            text: "TextField cannot be null"
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
+            visible: false
+        }
+
+        Label {
+            x: parent.width/2 - 100
+            y: 50 + (parent.height-50)/15
+            width: 200
+            height: (parent.height-50)/15
+            Material.accent: "#20B2AA"
+            clip: true
+            color: "#20B2AA"
+            text: "Total Price"
+            font.bold: true
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+
+        TextField {
+            id: totalPriceField
+            x: parent.width/2-100
+            y: 50+(parent.height-50)*2/15
+            width: 200
+            height: (parent.height-50)/15
+            Material.accent: "#20B2AA"
+            clip: true
+            selectByMouse: true
+            text: totalPrice
+        }
+
+        Label {
+            x: parent.width/2 - 100
+            y: 50+(parent.height-50)*3/15
+            width: 200
+            height: (parent.height-50)/15
+            Material.accent: "#20B2AA"
+            clip: true
+            color: "#20B2AA"
+            text: "Quality"
+            font.bold: true
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        TextField {
+            id: qualityField
+            x: parent.width/2-100
+            y: 50+(parent.height-50)*4/15
+            width: 200
+            height: (parent.height-50)/15
+            Material.accent: "#20B2AA"
+            clip: true
+            selectByMouse: true
+            text: quality
+        }
+
+        Label {
+            x: parent.width/2 - 100
+            y: 50+(parent.height-50)*5/15
+            width: 200
+            height: (parent.height-50)/15
+            Material.accent: "#20B2AA"
+            clip: true
+            color: "#20B2AA"
+            text: "UserID"
+            font.bold: true
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        TextField {
+            id: userIDField
+            x: parent.width/2-100
+            y: 50+(parent.height-50)*6/15
+            width: 200
+            height: (parent.height-50)/15
+            Material.accent: "#20B2AA"
+            clip: true
+            selectByMouse: true
+            text: userID
+        }
+
+        Label {
+            x: parent.width/2 - 100
+            y: 50+(parent.height-50)*7/15
+            width: 200
+            height: (parent.height-50)/15
+            Material.accent: "#20B2AA"
+            clip: true
+            color: "#20B2AA"
+            text: "ReceiveName"
+            font.bold: true
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        TextField {
+            id: receiveNameField
+            x: parent.width/2-100
+            y: 50+(parent.height-50)*8/15
+            width: 200
+            height: (parent.height-50)/15
+            Material.accent: "#20B2AA"
+            clip: true
+            selectByMouse: true
+            text: receiveName
+        }
+
+        Label {
+            x: parent.width/2 - 100
+            y: 50+(parent.height-50)*9/15
+            width: 200
+            height: (parent.height-50)/15
+            Material.accent: "#20B2AA"
+            clip: true
+            color: "#20B2AA"
+            text: "ReceiveAddress"
+            font.bold: true
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        TextField {
+            id: receiveAddressField
+            x: parent.width/2-100
+            y: 50+(parent.height-50)*10/15
+            width: 200
+            height: (parent.height-50)/15
+            Material.accent: "#20B2AA"
+            clip: true
+            selectByMouse: true
+            text: receiveAddress
+        }
+
+        Label {
+            x: parent.width/2 - 100
+            y: 50+(parent.height-50)*11/15
+            width: 200
+            height: (parent.height-50)/15
+            Material.accent: "#20B2AA"
+            clip: true
+            color: "#20B2AA"
+            text: "ReceivePhone"
+            font.bold: true
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        TextField {
+            id: receivePhoneField
+            x: parent.width/2-100
+            y: 50+(parent.height-50)*12/15
+            width: 200
+            height: (parent.height-50)/15
+            Material.accent: "#20B2AA"
+            clip: true
+            selectByMouse: true
+            text: receivePhone
+        }
+
+        Label {
+            x: parent.width/2 - 100
+            y: 50+(parent.height-50)*13/15
+            width: 200
+            height: (parent.height-50)/15
+            Material.accent: "#20B2AA"
+            clip: true
+            color: "#20B2AA"
+            text: "Remark"
+            font.bold: true
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        TextField {
+            id: remarkField
+            x: parent.width/2-100
+            y: 50+(parent.height-50)*14/15
+            width: 200
+            height: (parent.height-50)/15
+            Material.accent: "#20B2AA"
+            clip: true
+            selectByMouse: true
+            text: remark
+        }
+
+    }
+
+    Rectangle {
+        color: "silver"
+        x: exportItem.width*2/3
+        width: 1
+        height: exportItem.height
+    }
 }

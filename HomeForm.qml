@@ -10,8 +10,8 @@ Item {
         width: parent.width - toolBarLeft.width
         height: parent.height
         initialItem:
-        Text {
-            id: info
+            Text {
+            id: homeInfo
             color: "#6C6C6C"
             font.family: "Arial"
             font.pixelSize: 20
