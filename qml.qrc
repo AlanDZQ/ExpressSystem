@@ -10,9 +10,12 @@
         <file>ExportForm.qml</file>
         <file>GoodsForm.qml</file>
         <file>PeopleForm.qml</file>
-        <file>PersonalInfoForm.qml</file>
         <file>SupplierForm.qml</file>
         <file>ImportItem.qml</file>
         <file>ExportItem.qml</file>
+        <file>GoodItem.qml</file>
+        <file>WarehouseItem.qml</file>
+        <file>SupplierItem.qml</file>
+        <file>PeopleItem.qml</file>
     </qresource>
 </RCC>

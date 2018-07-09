@@ -77,7 +77,8 @@ public slots:
                      QString supplierID,
                      QString amount,
                      QString price,
-                     QString description);
+                     QString description,
+                     QString location);
 
     void addImportinfo(QString iserialID,
                        QString supplierID,
@@ -98,6 +99,35 @@ public slots:
     void addImportGoodinfo(QString iserialID,
                                        QString goodID,
                                        QString amount);
+    void addExportFull(QString eserialID,
+                                   QString totalprice,
+                                   QString quality,
+                                   QString userID,
+                                   QString receivename,
+                                   QString receiveaddress,
+                                   QString receivephone,
+                                   QString remark,
+                                   QString goodID,
+                                   QString amount,
+                                   QString time,
+                                   QString status,
+                                   QString warehouseID);
+    void addEG(QString eserialID,
+                                   QString goodID,
+                                   QString amount,
+                                   QString warehouseID);
+    void addImportFull(QString iserialID,
+                                   QString supplierID,
+                                   QString totalprice,
+                                   QString userID,
+                                   QString time,
+                                   QString goodID,
+                                   QString amount,
+                                   QString warehouseID);
+    void addIG(QString iserialID,
+                                   QString goodID,
+                                   QString amount,
+                                   QString warehouseID);
     //-----------------------------------------------  adder  end ------------------------------------------------------
 
     //-----------------------------------------------  deleter ------------------------------------------------------
@@ -120,6 +150,35 @@ public slots:
                          QString goodID);
 
     void delImportGoodinfo(QString iserialID, QString goodID);
+    void delIG(QString iserialID,
+                                  QString goodID,
+                                  QString amount,
+                                  QString warehouseID);
+    void delImportFull(QString iserialID,
+                                  QString supplierID,
+                                  QString totalprice,
+                                  QString userID,
+                                  QString time,
+                                  QString goodID,
+                                  QString amount,
+                                  QString warehouseID);
+    void delEG(QString eserialID,
+                                   QString goodID,
+                                   QString amount,
+                                   QString warehouseID);
+    void delExportFull(QString eserialID,
+                                   QString totalprice,
+                                   QString quality,
+                                   QString userID,
+                                   QString receivename,
+                                   QString receiveaddress,
+                                   QString receivephone,
+                                   QString remark,
+                                   QString goodID,
+                                   QString amount,
+                                   QString time,
+                                   QString status,
+                                   QString warehouseID);
 
     //-----------------------------------------------  deleter end ------------------------------------------------------
 
@@ -162,7 +221,8 @@ public slots:
                      QString supplierID,
                      QString amount,
                      QString price,
-                     QString description);
+                     QString description,
+                      QString location);
 
 
     void editSupplierinfo(QString supplierID,
@@ -182,10 +242,11 @@ public slots:
 
     //-----------------------------------------------  editor end ------------------------------------------------------
 
-    QList<QVariant>  searchExport(QString theOne);
+    QList<QVariant> searchExport(QString theOne);
     QList<QVariant> searchExportGood(  QString theOne);
     QList<QVariant> searchExportStatus( QString theOne);
     QList<QVariant> searchGood( QString theOne);
+    QList<QVariant> searchGoodW(QString theOne);
     QList<QVariant> searchImport( QString theOne);
     QList<QVariant> searchImportGood( QString theOne);
     QList<QVariant> searchSupplier( QString theOne);
@@ -193,7 +254,7 @@ public slots:
     QList<QVariant> searchWarehouse( QString theOne);
 
 
-    QList<QVariant>  sortExport(QString colName, bool asc = true );
+    QList<QVariant> sortExport(QString colName, bool asc = true );
     QList<QVariant> sortExportGood(QString colName, bool asc = true);
     QList<QVariant> sortExportStatus(QString colName,  bool asc = true);
     QList<QVariant> sortGood(QString colName,  bool asc = true);

@@ -42,7 +42,7 @@ QList<QVariant> DBConnection::openExportInfo(){
 QList<QVariant> DBConnection::openExportGoodInfo(){
     QList<QVariant> list = {};
     QSqlQuery query;
-    query.exec("SELECT * FROM NEUSOFT1.EXPORT_GOOD_INFO;");
+    query.exec("SELECT * FROM NEUSOFT1.EXPORT_GOODS_INFO;");
     while(query.next()){
         ExportGood* eg = new ExportGood(query.value(0).toString(), query.value(1).toString(), query.value(2).toInt());
 
@@ -71,7 +71,7 @@ QList<QVariant> DBConnection::openGoodinfo(){
     query.exec("SELECT * FROM NEUSOFT1.GOODS_INFO;");
     while(query.next()){
         Good* gi = new Good(query.value(0).toString(), query.value(1).toString(), query.value(2).toString(),
-                                        query.value(3).toInt(), query.value(4).toDouble(), query.value(5).toString());
+                                        query.value(3).toInt(), query.value(4).toDouble(), query.value(5).toString(), query.value(6).toString());
         list.append(QVariant::fromValue(gi));
     }
     return list;
@@ -92,7 +92,7 @@ QList<QVariant> DBConnection::openImportinfo(){
 QList<QVariant> DBConnection::openImportGoodinfo(){
     QList<QVariant> list = {};
     QSqlQuery query;
-    query.exec("SELECT * FROM NEUSOFT1.IMPORT_GOOD_INFO;");
+    query.exec("SELECT * FROM NEUSOFT1.IMPORT_GOODS_INFO;");
     while(query.next()){
         ImportGood* ig = new ImportGood(query.value(0).toString(), query.value(1).toString(), query.value(2).toInt());
         list.append(QVariant::fromValue(ig));

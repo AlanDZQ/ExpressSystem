@@ -24,7 +24,9 @@ Item {
             text: qsTr("Login")
             onClicked: {
                 if(dbconnection.checkLogin(nameField.text, passwordField.text)){
-                    stackView.push("HomeForm.qml")
+                    stackView.push("HomeForm.qml",{
+                                       userID: nameField.text
+                                   })
                     overTimer.stop();
                     if (subWindow.visible === true) return;
                     info.text= "Welcome back " + nameField.text

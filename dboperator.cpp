@@ -92,6 +92,20 @@ void DBOperator::undo(){
             case 9:
                 delWarehouseinfo(undoData[0]);
                 break;
+            case 11:
+                delExportFull(undoData[0],undoData[1],undoData[2],undoData[3],undoData[4],undoData[5],undoData[6],undoData[7]
+                        ,undoData[9],undoData[10],undoData[12],undoData[13],undoData[14]);
+                break;
+            case 12:
+                delEG(undoData[0],undoData[1],undoData[2],undoData[3]);
+                break;
+            case 13:
+                delImportFull(undoData[0],undoData[1],undoData[2],undoData[3],undoData[4],undoData[5],undoData[7]
+                        ,undoData[9]);
+                break;
+            case 14:
+                delIG(undoData[0],undoData[1],undoData[2],undoData[3]);
+                break;
             default :
                 break;
             }
@@ -111,7 +125,7 @@ void DBOperator::undo(){
                 break;
             case 4:
                 addGoodinfo(undoData[0],undoData[1],undoData[2]
-                        ,undoData[3],undoData[4],undoData[5]);
+                        ,undoData[3],undoData[4],undoData[5],undoData[6]);
                 break;
             case 5:
                 addImportinfo(undoData[0],undoData[1],undoData[2]
@@ -132,6 +146,20 @@ void DBOperator::undo(){
             case 9:
                 addWarehouseinfo(undoData[0],undoData[1],undoData[2]);
                 break;
+            case 21:
+                addExportFull(undoData[0],undoData[1],undoData[2],undoData[3],undoData[4],undoData[5],undoData[6],undoData[7]
+                        ,undoData[9],undoData[10],undoData[12],undoData[13],undoData[14]);
+                break;
+            case 22:
+                addEG(undoData[0],undoData[1],undoData[2],undoData[3]);
+                break;
+            case 23:
+                addImportFull(undoData[0],undoData[1],undoData[2],undoData[3],undoData[4],undoData[5],undoData[7]
+                        ,undoData[9]);
+                break;
+            case 24:
+                addIG(undoData[0],undoData[1],undoData[2],undoData[3]);
+                break;
             default :
                 break;
             }
@@ -151,7 +179,7 @@ void DBOperator::undo(){
                 break;
             case 4:
                 editGoodinfo(undoData[0],undoData[1],undoData[2]
-                        ,undoData[3],undoData[4],undoData[5]);
+                        ,undoData[3],undoData[4],undoData[5],undoData[6]);
                 break;
             case 5:
                 editImportinfo(undoData[0],undoData[1],undoData[2]
@@ -261,13 +289,294 @@ void DBOperator::addExport(QString eserialID,
 
 }
 
+void DBOperator::addExportFull(QString eserialID,//2018年07月06日13:58:02  full begin
+                               QString totalprice,
+                               QString quality,
+                               QString userID,
+                               QString receivename,
+                               QString receiveaddress,
+                               QString receivephone,
+                               QString remark,
+                               QString goodID,
+                               QString amount,
+                               QString time,
+                               QString status,
+                               QString warehouseID){
+
+
+    double totalprice1 = totalprice.toDouble();
+    double quality1 = quality.toDouble();
+    int amount1 = amount.toInt();
+    QSqlQuery query;
+    QSqlQuery query2;
+    QSqlQuery query3;
+    QSqlQuery query4;
+    QSqlQuery query5;
+
+
+//    qDebug()<<"111"<<endl;
+
+    QString sqlquery = QString("insert into NEUSOFT1.EXPORT_INFO values('%1','%2','%3','%4','%5','%6','%7','%8')")
+            .arg(eserialID)
+            .arg(totalprice1)
+            .arg(quality1)
+            .arg(userID,receivename,receiveaddress,receivephone,remark);
+
+    QString sqlquery2 = QString("insert into NEUSOFT1.EXPORT_GOODS_INFO values('%1','%2','%3')")
+            .arg(eserialID)
+            .arg(goodID)
+            .arg(amount1);
+
+    QString sqlquery3 = QString("insert into NEUSOFT1.EXPORT_STATUS_INFO values('%1','%2','%3')")
+            .arg(eserialID)
+            .arg(time)
+            .arg(status);
+
+    int amountOfGood;
+
+
+    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.GOODS_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
+            .arg(warehouseID, goodID);
+
+    query4.exec(sqlquery4);
+    query.next();
+    amountOfGood = query.value(0).toInt() - amount.toInt();
+
+    QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
+                               " amount = '%3'"
+                               "WHERE goodID = '%1' and warehouseID = '%2'")
+            .arg(goodID,warehouseID)
+            .arg(amountOfGood);
+    query5.exec(sqlquery5);
+
+
+    saveOperation(sqlquery);
+    undoData.clear();
+    undoData.append(eserialID);
+    undoData.append(totalprice);
+    undoData.append(quality);
+    undoData.append(userID);
+    undoData.append(receivename);
+    undoData.append(receiveaddress);
+    undoData.append(receivephone);
+    undoData.append(remark);
+
+    undoData.append(eserialID);
+    undoData.append(goodID);
+    undoData.append(amount);
+
+    undoData.append(eserialID);
+    undoData.append(time);
+    undoData.append(status);
+
+    undoData.append(warehouseID);
+    undoData.append(goodID);
+
+
+    this->lastClassNum = 11;
+//    qDebug()<<sqlquery<<endl;
+
+    query.exec(sqlquery);
+    query2.exec(sqlquery2);
+    query3.exec(sqlquery3);
+
+    qDebug()<<"addExport OK"<<endl;
+
+}
+
+void DBOperator::addEG(QString eserialID,//2018年07月06日13:58:02
+                               QString goodID,
+                               QString amount,
+                               QString warehouseID){
+
+    int amount1 = amount.toInt();
+    QSqlQuery query2;
+    QSqlQuery query4;
+    QSqlQuery query5;
+
+    QString sqlquery2 = QString("insert into NEUSOFT1.EXPORT_GOODS_INFO values('%1','%2','%3')")
+            .arg(eserialID)
+            .arg(goodID)
+            .arg(amount1);
+
+    int amountOfGood;
+
+
+    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.GOODS_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
+            .arg(warehouseID, goodID);
+
+    query4.exec(sqlquery4);
+    query4.next();
+    amountOfGood = query4.value(0).toInt() - amount.toInt();
+
+    QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
+                               " amount = '%3'"
+                               "WHERE goodID = '%1' and warehouseID = '%2'")
+            .arg(goodID,warehouseID)
+            .arg(amountOfGood);
+    query5.exec(sqlquery5);
+
+
+    saveOperation(sqlquery2);
+
+
+    undoData.append(eserialID);
+    undoData.append(goodID);
+    undoData.append(amount);
+
+
+    undoData.append(warehouseID);
+    undoData.append(goodID);
+
+
+    this->lastClassNum = 12;
+    query2.exec(sqlquery2);
+
+    qDebug()<<"addEG OK"<<endl;
+
+}
+
+
+void DBOperator::addImportFull(QString iserialID,
+                               QString supplierID,
+                               QString totalprice,
+                               QString userID,
+                               QString time,
+                               QString goodID,
+                               QString amount,
+                               QString warehouseID){
+
+
+    double totalprice1 = totalprice.toDouble();
+    int amount1 = amount.toInt();
+    QSqlQuery query;
+    QSqlQuery query2;
+    QSqlQuery query4;
+    QSqlQuery query5;
+
+
+    QString sqlquery = QString("insert into NEUSOFT1.IMPORT_INFO values('%1','%2','%3','%4','%5')")
+                .arg(iserialID,supplierID)
+                .arg(totalprice1)
+                .arg(userID)
+                .arg(time);
+
+
+
+    QString sqlquery2 = QString("insert into NEUSOFT1.IMPORT_GOODS_INFO values('%1','%2','%3')")
+            .arg(iserialID)
+            .arg(goodID)
+            .arg(amount1);
+
+
+
+    int amountOfGood;
+
+
+    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.WAREHOUSE_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
+            .arg(warehouseID, goodID);
+
+    query4.exec(sqlquery4);
+    query.next();
+    amountOfGood = query.value(0).toInt() + amount.toInt();
+
+    QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
+                               " amount = '%3'"
+                               "WHERE goodID = '%1' and warehouseID = '%2'")
+            .arg(goodID,warehouseID)
+            .arg(amountOfGood);
+    query5.exec(sqlquery5);
+
+    saveOperation(sqlquery);
+    undoData.clear();
+    undoData.append(iserialID);
+    undoData.append(supplierID);
+    undoData.append(totalprice);
+    undoData.append(userID);
+    undoData.append(time);
+
+    undoData.append(iserialID);
+    undoData.append(goodID);
+    undoData.append(amount);
+
+
+    undoData.append(warehouseID);
+    undoData.append(goodID);
+
+
+    this->lastClassNum = 13;
+//    qDebug()<<sqlquery<<endl;
+
+    query.exec(sqlquery);
+    query2.exec(sqlquery2);
+
+    qDebug()<<"addIMPORTFULL OK"<<endl;
+
+}
+
+void DBOperator::addIG(QString iserialID,
+                               QString goodID,
+                               QString amount,
+                               QString warehouseID){
+
+
+    int amount1 = amount.toInt();
+    QSqlQuery query2;
+    QSqlQuery query4;
+    QSqlQuery query5;
+
+
+    QString sqlquery2 = QString("insert into NEUSOFT1.IMPORT_GOODS_INFO values('%1','%2','%3')")
+            .arg(iserialID)
+            .arg(goodID)
+            .arg(amount1);
+
+    int amountOfGood;
+
+    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.GOODS_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
+            .arg(warehouseID, goodID);
+//    qDebug()<<sqlquery4;
+    query4.exec(sqlquery4);
+    query4.next();
+    amountOfGood = query4.value(0).toInt() + amount.toInt();
+//    qDebug()<<amountOfGood<<"  "<<query4.value(0).toInt()<<"   "<<amount.toInt();
+
+    QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
+                               " amount = '%3' "
+                               "WHERE goodID = '%1' and warehouseID = '%2'")
+            .arg(goodID,warehouseID)
+            .arg(amountOfGood);
+    query5.exec(sqlquery5);
+
+    saveOperation(sqlquery2);
+    undoData.clear();
+
+    undoData.append(iserialID);
+    undoData.append(goodID);
+    undoData.append(amount);
+
+    undoData.append(warehouseID);
+    undoData.append(goodID);
+
+
+    this->lastClassNum = 14;
+//    qDebug()<<sqlquery<<endl;
+
+    query2.exec(sqlquery2);
+
+    qDebug()<<"addIG OK"<<endl;
+
+}//full end
+
+
+
 
 void DBOperator::addExportGood(QString eserialID,// changing 2018年06月29日13:02:04
                                    QString goodID,
                                    QString amount){
     int amount1 = amount.toInt();
     QSqlQuery query;
-    QString sqlquery = QString("insert into NEUSOFT1.EXPORT_GOOD_INFO values('%1','%2','%3')")
+    QString sqlquery = QString("insert into NEUSOFT1.EXPORT_GOODS_INFO values('%1','%2','%3')")
             .arg(eserialID)
             .arg(goodID)
             .arg(amount1);
@@ -313,16 +622,17 @@ void DBOperator::addGoodinfo(QString goodID,
                              QString supplierID,
                              QString amount,
                              QString price,
-                             QString description){
+                             QString description,
+                             QString location){
     int amount1 = amount.toInt();
     double price1 = price.toDouble();
 
     QSqlQuery query;
-    QString sqlquery = QString("insert into NEUSOFT1.GOODS_INFO values('%1','%2','%3','%4','%5','%6')")
+    QString sqlquery = QString("insert into NEUSOFT1.GOODS_INFO values('%1','%2','%3','%4','%5','%6','%7')")
             .arg(goodID,warehouseID,supplierID)
             .arg(amount1)
             .arg(price1)
-            .arg(description);
+            .arg(description,location);
 
     saveOperation(sqlquery);
     undoData.clear();
@@ -332,6 +642,7 @@ void DBOperator::addGoodinfo(QString goodID,
     undoData.append(amount);
     undoData.append(price);
     undoData.append(description);
+    undoData.append(location);
     this->lastClassNum = 4;
 
     query.exec(sqlquery);
@@ -470,7 +781,7 @@ void DBOperator::delImportinfo(QString iserialID){
 void DBOperator::delImportGoodinfo(QString iserialID, QString goodID){//修改到此 2018年07月03日15:59:23
 
     QSqlQuery query0;
-    QString sqlquery0 = QString("SELECT * FROM NEUSOFT1.IMPORT_GOOD_INFOWHERE iserialID = '%1'and goodID = '%2' ")
+    QString sqlquery0 = QString("SELECT * FROM NEUSOFT1.IMPORT_GOODS_INFOWHERE iserialID = '%1'and goodID = '%2' ")
             .arg(iserialID,goodID);
     query0.exec(sqlquery0);
     undoData.clear();
@@ -484,7 +795,7 @@ void DBOperator::delImportGoodinfo(QString iserialID, QString goodID){//修改�
     this->lastClassNum = 6;
 
     QSqlQuery query;
-    QString sqlquery = QString("DELETE FROM NEUSOFT1.IMPORT_GOOD_INFO WHERE iserialID = '%1'and goodID = '%2' ")
+    QString sqlquery = QString("DELETE FROM NEUSOFT1.IMPORT_GOODS_INFO WHERE iserialID = '%1'and goodID = '%2' ")
             .arg(iserialID,goodID);
 
     saveOperation(sqlquery);
@@ -555,6 +866,187 @@ void DBOperator::delExport(QString eserialID){// changing 2018-06-29 13:12:14
     qDebug()<<"delExportinfo OK"<<endl;
 }
 
+void DBOperator::delExportFull(QString eserialID,
+                               QString totalprice,
+                               QString quality,
+                               QString userID,
+                               QString receivename,
+                               QString receiveaddress,
+                               QString receivephone,
+                               QString remark,
+                               QString goodID,
+                               QString amount,
+                               QString time,
+                               QString status,
+                               QString warehouseID){
+    QSqlQuery query4;
+    QSqlQuery query5;
+
+    delExport(eserialID);
+    delExportGood(eserialID,goodID);
+    delExportStatus(eserialID,goodID);
+
+    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.WAREHOUSE_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
+            .arg(warehouseID, goodID);
+
+    query4.exec(sqlquery4);
+    query4.next();
+    int amountOfGood = query4.value(0).toInt() - amount.toInt();
+
+    QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
+                                " amount = '%3'"
+                                "WHERE goodID = '%1' and warehouseID = '%2'")
+            .arg(goodID,warehouseID)
+            .arg(amountOfGood);
+    query5.exec(sqlquery5);
+
+    saveOperation("DELETE");
+    undoData.clear();
+    undoData.append(eserialID);
+    undoData.append(totalprice);
+    undoData.append(quality);
+    undoData.append(userID);
+    undoData.append(receivename);
+    undoData.append(receiveaddress);
+    undoData.append(receivephone);
+    undoData.append(remark);
+
+    undoData.append(eserialID);
+    undoData.append(goodID);
+    undoData.append(amount);
+
+    undoData.append(eserialID);
+    undoData.append(time);
+    undoData.append(status);
+
+    undoData.append(warehouseID);
+    undoData.append(goodID);
+    this->lastClassNum = 21;
+}
+
+void DBOperator::delEG(QString eserialID,
+                               QString goodID,
+                               QString amount,
+                               QString warehouseID){
+    QSqlQuery query4;
+    QSqlQuery query5;
+
+    delExportGood(eserialID,goodID);
+
+    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.WAREHOUSE_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
+            .arg(warehouseID, goodID);
+
+    query4.exec(sqlquery4);
+    query4.next();
+    int amountOfGood = query4.value(0).toInt() - amount.toInt();
+
+    QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
+                                " amount = '%3'"
+                                "WHERE goodID = '%1' and warehouseID = '%2'")
+            .arg(goodID,warehouseID)
+            .arg(amountOfGood);
+    query5.exec(sqlquery5);
+
+    saveOperation("DELETE");
+    undoData.clear();
+
+
+    undoData.append(eserialID);
+    undoData.append(goodID);
+    undoData.append(amount);
+
+
+    undoData.append(warehouseID);
+    undoData.append(goodID);
+    this->lastClassNum = 22;
+}
+
+void DBOperator::delImportFull(QString iserialID,
+                              QString supplierID,
+                              QString totalprice,
+                              QString userID,
+                              QString time,
+                              QString goodID,
+                              QString amount,
+                              QString warehouseID){
+
+
+    delImportinfo(iserialID);
+    delImportGoodinfo(iserialID,goodID);
+    QSqlQuery query4;
+    QSqlQuery query5;
+    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.WAREHOUSE_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
+            .arg(warehouseID, goodID);
+
+    query4.exec(sqlquery4);
+    query4.next();
+    int amountOfGood = query4.value(0).toInt() - amount.toInt();
+
+    QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
+                                " amount = '%3'"
+                                "WHERE goodID = '%1' and warehouseID = '%2'")
+            .arg(goodID,warehouseID)
+            .arg(amountOfGood);
+    query5.exec(sqlquery5);
+
+    saveOperation("DELETE");
+    undoData.clear();
+    undoData.append(iserialID);
+    undoData.append(supplierID);
+    undoData.append(totalprice);
+    undoData.append(userID);
+    undoData.append(time);
+
+    undoData.append(iserialID);
+    undoData.append(goodID);
+    undoData.append(amount);
+
+
+    undoData.append(warehouseID);
+    undoData.append(goodID);
+    this->lastClassNum = 23;
+
+
+}
+
+void DBOperator::delIG(QString iserialID,
+                              QString goodID,
+                              QString amount,
+                              QString warehouseID){
+
+
+    delImportGoodinfo(iserialID,goodID);
+    QSqlQuery query4;
+    QSqlQuery query5;
+    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.WAREHOUSE_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
+            .arg(warehouseID, goodID);
+
+    query4.exec(sqlquery4);
+    query4.next();
+    int amountOfGood = query4.value(0).toInt() - amount.toInt();
+
+    QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
+                                " amount = '%3'"
+                                "WHERE goodID = '%1' and warehouseID = '%2'")
+            .arg(goodID,warehouseID)
+            .arg(amountOfGood);
+    query5.exec(sqlquery5);
+
+    saveOperation("DELETE");
+    undoData.clear();
+    undoData.append(iserialID);
+    undoData.append(goodID);
+    undoData.append(amount);
+
+
+    undoData.append(warehouseID);
+    undoData.append(goodID);
+    this->lastClassNum = 24;
+
+}
+
+
+
 void DBOperator::delExportStatus(QString eserialID, QString time){// changing 2018-06-29 13:12:14
 
     QSqlQuery query0;
@@ -582,7 +1074,7 @@ void DBOperator::delExportStatus(QString eserialID, QString time){// changing 20
 
 void DBOperator::delExportGood(QString eserialID, QString goodID){// changing 2018-06-29 13:12:14
     QSqlQuery query0;
-    QString sqlquery0 = QString("SELECT * FROM NEUSOFT1.EXPORT_GOOD_INFO WHERE eserialID = '%1' AND goodID = '%2' ")
+    QString sqlquery0 = QString("SELECT * FROM NEUSOFT1.EXPORT_GOODS_INFO WHERE eserialID = '%1' AND goodID = '%2' ")
             .arg(eserialID,goodID);
     query0.exec(sqlquery0);
     undoData.clear();
@@ -595,7 +1087,7 @@ void DBOperator::delExportGood(QString eserialID, QString goodID){// changing 20
     this->lastClassNum = 2;
 
     QSqlQuery query;
-    QString sqlquery = QString("DELETE FROM NEUSOFT1.EXPORT_GOOD_INFO WHERE eserialID = '%1' AND goodID = '%2' ")
+    QString sqlquery = QString("DELETE FROM NEUSOFT1.EXPORT_GOODS_INFO WHERE eserialID = '%1' AND goodID = '%2' ")
             .arg(eserialID,goodID);
 
     saveOperation(sqlquery);
@@ -619,6 +1111,8 @@ void DBOperator::delGoodinfo(QString goodID,QString warehouseID){
     undoData.append(query0.value(3).toString());
     undoData.append(query0.value(4).toString());
     undoData.append(query0.value(5).toString());
+    undoData.append(query0.value(6).toString());
+
 
     this->lastClassNum = 4;
     QSqlQuery query;
@@ -660,7 +1154,7 @@ void DBOperator::delSupplierinfo(QString supplierID){
 void DBOperator::delWarehouseinfo(QString warehouseID){
 
     QSqlQuery query0;
-    QString sqlquery0 = QString("SELECT * FROM NEUSOFT1.WAREHOUSE_INFOWHERE warehouseID = '%1' ")
+    QString sqlquery0 = QString("SELECT * FROM NEUSOFT1.WAREHOUSE_INFO WHERE warehouseID = '%1' ")
             .arg(warehouseID);
     query0.exec(sqlquery0);
 
@@ -670,6 +1164,10 @@ void DBOperator::delWarehouseinfo(QString warehouseID){
     undoData.append(query0.value(0).toString());
     undoData.append(query0.value(1).toString());
     undoData.append(query0.value(2).toString());
+
+    qDebug()<<undoData[0]<<endl;
+    qDebug()<<undoData[1]<<endl;
+    qDebug()<<undoData[2]<<endl;
 
 
     this->lastClassNum = 9;
@@ -734,7 +1232,7 @@ void DBOperator::editImportGoodinfo(QString iserialID,
 
     int amount1 = amount.toInt();
     QSqlQuery query0;
-    QString sqlquery0 = QString("SELECT * FROM NEUSOFT1.IMPORT_GOOD_INFOWHERE iserialID = '%1'and goodID = '%2' ")
+    QString sqlquery0 = QString("SELECT * FROM NEUSOFT1.IMPORT_GOODS_INFOWHERE iserialID = '%1'and goodID = '%2' ")
             .arg(iserialID,goodID);
     query0.exec(sqlquery0);
     undoData.clear();
@@ -748,7 +1246,7 @@ void DBOperator::editImportGoodinfo(QString iserialID,
     this->lastClassNum = 6;
 
     QSqlQuery query;
-    QString sqlquery = QString("UPDATE NEUSOFT1.IMPORT_GOOD_INFO SET amount = '%3' "
+    QString sqlquery = QString("UPDATE NEUSOFT1.IMPORT_GOODS_INFO SET amount = '%3' "
                                "WHERE iserialID = '%1' AND goodID = '%2 ")
             .arg(iserialID,goodID)
             .arg(amount1);
@@ -861,7 +1359,7 @@ void DBOperator::editExportGood(QString eserialID,// changing 2018年06月29日1
     int amount1 = amount.toInt();
 
     QSqlQuery query0;
-       QString sqlquery0 = QString("SELECT * FROM NEUSOFT1.EXPORT_GOOD_INFO WHERE eserialID = '%1' AND goodID = '%2' ")
+       QString sqlquery0 = QString("SELECT * FROM NEUSOFT1.EXPORT_GOODS_INFO WHERE eserialID = '%1' AND goodID = '%2' ")
                .arg(eserialID,goodID);
        query0.exec(sqlquery0);
        undoData.clear();
@@ -873,7 +1371,7 @@ void DBOperator::editExportGood(QString eserialID,// changing 2018年06月29日1
 
        this->lastClassNum = 2;
     QSqlQuery query;
-    QString sqlquery = QString("UPDATE NEUSOFT1.EXPORT_GOOD_INFO SET amount = '%3'  WHERE eserialID = '%1' and goodID = '%2' ")
+    QString sqlquery = QString("UPDATE NEUSOFT1.EXPORT_GOODS_INFO SET amount = '%3'  WHERE eserialID = '%1' and goodID = '%2' ")
             .arg(eserialID)
             .arg(goodID)
             .arg(amount1);
@@ -919,7 +1417,8 @@ void DBOperator::editGoodinfo(QString goodID,
                               QString supplierID,
                               QString amount,
                               QString price,
-                              QString description){
+                              QString description,
+                              QString location){
     int amount1 = amount.toInt();
     double price1 = price.toDouble();
     QSqlQuery query0;
@@ -936,17 +1435,19 @@ void DBOperator::editGoodinfo(QString goodID,
         undoData.append(query0.value(3).toString());
         undoData.append(query0.value(4).toString());
         undoData.append(query0.value(5).toString());
+        undoData.append(query0.value(6).toString());
 
         this->lastClassNum = 4;
     QSqlQuery query;
     QString sqlquery = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
-                               ", supplierID = '%3', amount = '%4', price = '%5', description = '%6'"
+                               "supplierID = '%3', amount = '%4', price = '%5', description = '%6' , location = '%7' "
                                "WHERE goodID = '%1' and warehouseID = '%2'")
             .arg(goodID,warehouseID,supplierID)
             .arg(amount1)
             .arg(price1)
-            .arg(description);
+            .arg(description, location);
     saveOperation(sqlquery);
+            qDebug()<<sqlquery;
     query.exec(sqlquery);
     qDebug()<<"addGoodinfo OK"<<endl;
 
@@ -1047,7 +1548,7 @@ QList<QVariant> DBOperator::searchExportGood(QString theOne){
 
     QSqlQuery query;
     QList<QVariant> list = {};
-    QString sqlquery = QString("SELECT * FROM NEUSOFT1.EXPORT_GOOD_INFO WHERE eserialID LIKE '%" "%1" "%' OR goodID LIKE '%" "%1" "%' "
+    QString sqlquery = QString("SELECT * FROM NEUSOFT1.EXPORT_GOODS_INFO WHERE eserialID LIKE '%" "%1" "%' OR goodID LIKE '%" "%1" "%' "
                                "OR amount LIKE '%" "%1" "%' ").arg(theOne);
 
     query.exec(sqlquery);//updated here 上次 2018-06-29 16:53:50
@@ -1079,7 +1580,7 @@ QList<QVariant> DBOperator::searchGood(QString theOne){
 
     QSqlQuery query;
     QList<QVariant> list = {};
-    QString sqlquery = QString("SELECT * FROM NEUSOFT1.GOOD_INFO WHERE goodID LIKE '%" "%1" "%' OR warehouseID LIKE '%" "%1" "%' "
+    QString sqlquery = QString("SELECT * FROM NEUSOFT1.GOODS_INFO WHERE goodID LIKE '%" "%1" "%' OR warehouseID LIKE '%" "%1" "%' "
                                "OR supplierID LIKE '%" "%1" "%' OR amount LIKE '%" "%1" "%' OR price LIKE '%" "%1" "%'"
                                " OR description LIKE '%" "%1" "%' "
                                "OR location LIKE '%" "%1" "%'").arg(theOne);
@@ -1087,7 +1588,24 @@ QList<QVariant> DBOperator::searchGood(QString theOne){
     query.exec(sqlquery);
     while(query.next()){
         Good* gi = new Good(query.value(0).toString(), query.value(1).toString(), query.value(2).toString(),
-                                        query.value(3).toInt(), query.value(4).toDouble(), query.value(5).toString());
+                                        query.value(3).toInt(), query.value(4).toDouble(), query.value(5).toString()
+                           , query.value(6).toString() );
+        list.append(QVariant::fromValue(gi));
+    }
+    return list;
+}
+
+QList<QVariant> DBOperator::searchGoodW(QString theOne){
+
+    QSqlQuery query;
+    QList<QVariant> list = {};
+    QString sqlquery = QString("SELECT * FROM NEUSOFT1.GOODS_INFO WHERE warehouseID = '%1'")
+            .arg(theOne);
+    qDebug()<<sqlquery;
+    query.exec(sqlquery);
+    while(query.next()){
+        Good* gi = new Good(query.value(0).toString(), query.value(1).toString(), query.value(2).toString(),
+                                        query.value(3).toInt(), query.value(4).toDouble(), query.value(5).toString(), query.value(6).toString());
         list.append(QVariant::fromValue(gi));
     }
     return list;
@@ -1114,9 +1632,9 @@ QList<QVariant> DBOperator::searchImportGood(QString theOne){
 
     QSqlQuery query;
     QList<QVariant> list = {};
-    QString sqlquery = QString("SELECT * FROM NEUSOFT1.IMPORT_GOOD_INFO WHERE goodID LIKE '%" "%1" "%' OR iserialID LIKE '%" "%1" "%' "
+    QString sqlquery = QString("SELECT * FROM NEUSOFT1.IMPORT_GOODS_INFO WHERE goodID LIKE '%" "%1" "%' OR iserialID LIKE '%" "%1" "%' "
                                "OR amount LIKE '%" "%1" "%' ").arg(theOne);
-
+qDebug()<<sqlquery;
     query.exec(sqlquery);
     while(query.next()){
         ImportGood* ig = new ImportGood(query.value(0).toString(), query.value(1).toString(), query.value(2).toInt());
@@ -1153,9 +1671,11 @@ QList<QVariant> DBOperator::searchUser(QString theOne){
 
     query.exec(sqlquery);
     while(query.next()){
-        ExportStatus* es = new ExportStatus(query.value(0).toString(), query.value(1).toDateTime(), query.value(2).toString());
-
-        list.append(QVariant::fromValue(es));
+        User* user = new User(query.value(0).toString(), query.value(1).toString(), query.value(2).toString(),
+                                        query.value(3).toString(), query.value(4).toInt(), query.value(5).toString(),
+                                        query.value(6).toFloat(), query.value(7).toString(), query.value(8).toString(),
+                                        query.value(9).toString());
+        list.append(QVariant::fromValue(user));
     }
     return list;
 }
@@ -1214,11 +1734,11 @@ QList<QVariant>  DBOperator:: sortExport(QString colName, bool asc){
     }
 }
 
-QList<QVariant>  DBOperator::sortExportGood(QString colName, bool asc ){
+QList<QVariant>  DBOperator::sortExportGood(QString colName, bool asc){
     if(asc){
         QSqlQuery query;
             QList<QVariant> list = {};
-            QString sqlquery = QString("SELECT * FROM NEUSOFT1.EXPORT_GOOD_INFO ORDER BY %1 asc")
+            QString sqlquery = QString("SELECT * FROM NEUSOFT1.EXPORT_GOODS_INFO ORDER BY %1 asc")
                     .arg(colName);
             query.exec(sqlquery);
             while(query.next()){
@@ -1230,7 +1750,7 @@ QList<QVariant>  DBOperator::sortExportGood(QString colName, bool asc ){
     }else {
         QSqlQuery query;
             QList<QVariant> list = {};
-            QString sqlquery = QString("SELECT * FROM NEUSOFT1.EXPORT_GOOD_INFO ORDER BY %1 desc")
+            QString sqlquery = QString("SELECT * FROM NEUSOFT1.EXPORT_GOODS_INFO ORDER BY %1 desc")
                     .arg(colName);
             query.exec(sqlquery);
             while(query.next()){
@@ -1276,28 +1796,30 @@ QList<QVariant>  DBOperator::sortGood(QString colName,  bool asc ){
     if(asc){
         QSqlQuery query;
             QList<QVariant> list = {};
-            QString sqlquery = QString("SELECT * FROM NEUSOFT1.GOOD_INFO ORDER BY %1 asc")
+            QString sqlquery = QString("SELECT * FROM NEUSOFT1.GOODS_INFO ORDER BY %1 asc")
                     .arg(colName);
 
 
             query.exec(sqlquery);
             while(query.next()){
                 Good* gi = new Good(query.value(0).toString(), query.value(1).toString(), query.value(2).toString(),
-                                                query.value(3).toInt(), query.value(4).toDouble(), query.value(5).toString());
+                                                query.value(3).toInt(), query.value(4).toDouble(), query.value(5).toString()
+                                    , query.value(6).toString());
                 list.append(QVariant::fromValue(gi));
             }
             return list;
     }else{
         QSqlQuery query;
             QList<QVariant> list = {};
-            QString sqlquery = QString("SELECT * FROM NEUSOFT1.GOOD_INFO ORDER BY %1 desc")
+            QString sqlquery = QString("SELECT * FROM NEUSOFT1.GOODS_INFO ORDER BY %1 desc")
                     .arg(colName);
 
 
             query.exec(sqlquery);
             while(query.next()){
                 Good* gi = new Good(query.value(0).toString(), query.value(1).toString(), query.value(2).toString(),
-                                                query.value(3).toInt(), query.value(4).toDouble(), query.value(5).toString());
+                                                query.value(3).toInt(), query.value(4).toDouble(), query.value(5).toString()
+                                    , query.value(6).toString());
                 list.append(QVariant::fromValue(gi));
             }
             return list;
@@ -1335,7 +1857,7 @@ QList<QVariant>  DBOperator::sortImportGood(QString colName,  bool asc ){
     if(asc){
         QSqlQuery query;
             QList<QVariant> list = {};
-            QString sqlquery = QString("SELECT * FROM NEUSOFT1.IMPORT_GOOD_INFO ORDER BY %1 asc")
+            QString sqlquery = QString("SELECT * FROM NEUSOFT1.IMPORT_GOODS_INFO ORDER BY %1 asc")
                     .arg(colName);
 
             query.exec(sqlquery);
@@ -1347,7 +1869,7 @@ QList<QVariant>  DBOperator::sortImportGood(QString colName,  bool asc ){
     }else{
         QSqlQuery query;
             QList<QVariant> list = {};
-            QString sqlquery = QString("SELECT * FROM NEUSOFT1.IMPORT_GOOD_INFO ORDER BY %1 desc")
+            QString sqlquery = QString("SELECT * FROM NEUSOFT1.IMPORT_GOODS_INFO ORDER BY %1 desc")
                     .arg(colName);
 
             query.exec(sqlquery);
@@ -1397,9 +1919,11 @@ QList<QVariant>  DBOperator::sortUser(QString colName, bool asc ){
                    .arg(colName);
            query.exec(sqlquery);
            while(query.next()){
-               ExportStatus* es = new ExportStatus(query.value(0).toString(), query.value(1).toDateTime(), query.value(2).toString());
-
-               list.append(QVariant::fromValue(es));
+               User* user = new User(query.value(0).toString(), query.value(1).toString(), query.value(2).toString(),
+                                               query.value(3).toString(), query.value(4).toInt(), query.value(5).toString(),
+                                               query.value(6).toFloat(), query.value(7).toString(), query.value(8).toString(),
+                                               query.value(9).toString());
+               list.append(QVariant::fromValue(user));
            }
            return list;
     }else{
@@ -1409,9 +1933,11 @@ QList<QVariant>  DBOperator::sortUser(QString colName, bool asc ){
                    .arg(colName);
            query.exec(sqlquery);
            while(query.next()){
-               ExportStatus* es = new ExportStatus(query.value(0).toString(), query.value(1).toDateTime(), query.value(2).toString());
-
-               list.append(QVariant::fromValue(es));
+               User* user = new User(query.value(0).toString(), query.value(1).toString(), query.value(2).toString(),
+                                               query.value(3).toString(), query.value(4).toInt(), query.value(5).toString(),
+                                               query.value(6).toFloat(), query.value(7).toString(), query.value(8).toString(),
+                                               query.value(9).toString());
+               list.append(QVariant::fromValue(user));
            }
            return list;
     }

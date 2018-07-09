@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Material 2.0
 
 Item {
+    property string userID: ""
     StackView {
         id: homeStackView
         x: toolBarLeft.width
@@ -128,7 +129,9 @@ Item {
                 height: 20
                 source: "user.png"
             }
-            onClicked: stackView.push("PersonalInfoForm.qml")
+            onClicked: homeStackView.push("PeopleItem.qml",{
+                                          userID: userID
+                                      })
 
         }
 

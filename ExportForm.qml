@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Material 2.0
 
 Item {
-    id:exportForm
+    id:itemForm
     Component{
         id:highlightrec
         Rectangle{
@@ -21,15 +21,16 @@ Item {
 
     function refresh1(){
         model1.clear()
-        for(var i = 0; i < dbconnection.openExportInfo().length; i++){
-            model1.append({"eserialID": dbconnection.openExportInfo()[i].getEserialID,
-                           "totalprice": dbconnection.openExportInfo()[i].getTotalprice.toString(),
-                           "quality": dbconnection.openExportInfo()[i].getQuality.toString(),
-                           "userID": dbconnection.openExportInfo()[i].getUserID,
-                           "receivename": dbconnection.openExportInfo()[i].getReceivename,
-                           "receiveaddress": dbconnection.openExportInfo()[i].getReceiveaddress,
-                           "receivephone": dbconnection.openExportInfo()[i].getReceivephone,
-                           "remark": dbconnection.openExportInfo()[i].getRemark})
+        var list = dbconnection.openExportInfo()
+        for(var i = 0; i < list.length; i++){
+            model1.append({"eserialID": list[i].getEserialID,
+                           "totalprice": list[i].getTotalprice.toString(),
+                           "quality": list[i].getQuality.toString(),
+                           "userID": list[i].getUserID,
+                           "receivename": list[i].getReceivename,
+                           "receiveaddress": list[i].getReceiveaddress,
+                           "receivephone": list[i].getReceivephone,
+                           "remark": list[i].getRemark})
         }
     }
 
@@ -164,7 +165,7 @@ Item {
                     color: "#ffffffff"
                     font.pixelSize: 20
                     padding: 10
-                    width: exportForm.width/8
+                    width: itemForm.width/8
                     background: Rectangle { color: "#20B2AA"}
                     MouseArea {
                         property point clickPoint: "0,0"
@@ -209,7 +210,7 @@ Item {
             width: parent.width
             height: 40
             anchors.top: parent.top
-            text:  "ADD NEW GOOD"
+            text:  "ADD NEW ITEM"
             color: "#6C6C6C"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -416,7 +417,7 @@ Item {
         Button {
             x: 100
             y: parent.height - 100
-            text: "ok"
+            text: "add data"
             Material.background: "#20B2AA"
             Material.foreground: "#FFFFFF"
             onClicked: {
@@ -425,6 +426,34 @@ Item {
                     addWarning1.visible = true
                 else{
                     dboperator.addExport(addField1.text, addField2.text, addField3.text, addField4.text, addField5.text
+                                         , addField6.text, addField7.text, addField8.text)
+                    addWarning1.visible = false
+                    addPopup1.close()
+                    refresh1()
+                    overTimer.stop();
+                    if (subWindow.visible === true) return;
+                    info.text = "Add successfully!"
+                    subWindow.opacity = 0.0;
+                    subWindow.visible = true;
+                    downAnimation.start();
+                    showAnimation.start();
+                    overTimer.start();
+                }
+            }
+        }
+
+        Button {
+            x:200
+            y: parent.height - 100
+            text: "Export Item"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                if(addField1.text === ""||addField2.text===""||addField3.text===""||addField4.text===""||addField5.text===""||addField6.text===""
+                        ||addField7.text===""||addField8.text===""||addField9.text===""||addField10.text===""||addField11.text===""||addField12.text==="")
+                    addWarning1.visible = true
+                else{
+                    dboperator.addExportFull(addField1.text, addField2.text, addField3.text, addField4.text, addField5.text
                                          , addField6.text, addField7.text, addField8.text)
                     addWarning1.visible = false
                     addPopup1.close()
@@ -468,7 +497,8 @@ Item {
             width: parent.width
             height: 40
             anchors.top: parent.top
-            text:  "Delete item"
+            text:  "DELETE ITEM"
+            color: "#6C6C6C"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
 
@@ -557,7 +587,6 @@ Item {
 
 
     ToolBar {
-        id: exportToolBar
         x: 0
         y: 0
         width: parent.width
@@ -722,15 +751,16 @@ Item {
             break;
         }
 
-        for(var i = 0; i < dboperator.sortExport(keyWord).length; i++){
-            model1.append({"eserialID": dboperator.sortExport(keyWord)[i].getEserialID,
-                           "totalprice": dboperator.sortExport(keyWord)[i].getTotalprice.toString(),
-                           "quality": dboperator.sortExport(keyWord)[i].getQuality.toString(),
-                           "userID": dboperator.sortExport(keyWord)[i].getUserID,
-                           "receivename": dboperator.sortExport(keyWord)[i].getReceivename,
-                           "receiveaddress": dboperator.sortExport(keyWord)[i].getReceiveaddress,
-                           "receivephone": dboperator.sortExport(keyWord)[i].getReceivephone,
-                           "remark": dboperator.sortExport(keyWord)[i].getRemark})
+        var list = dboperator.sortExport(keyWord)
+        for(var i = 0; i < list.length; i++){
+            model1.append({"eserialID": list[i].getEserialID,
+                           "totalprice": list[i].getTotalprice.toString(),
+                           "quality": list[i].getQuality.toString(),
+                           "userID": list[i].getUserID,
+                           "receivename": list[i].getReceivename,
+                           "receiveaddress": list[i].getReceiveaddress,
+                           "receivephone": list[i].getReceivephone,
+                           "remark": list[i].getRemark})
         }
     }
 
@@ -739,15 +769,16 @@ Item {
             refresh1()
         }else{
             model1.clear()
-            for(var i = 0; i < dboperator.searchExport(searchField.text).length; i++){
-                model1.append({"eserialID": dboperator.searchExport(searchField.text)[i].getEserialID,
-                               "totalprice": dboperator.searchExport(searchField.text)[i].getTotalprice.toString(),
-                               "quality": dboperator.searchExport(searchField.text)[i].getQuality.toString(),
-                               "userID": dboperator.searchExport(searchField.text)[i].getUserID,
-                               "receivename": dboperator.searchExport(searchField.text)[i].getReceivename,
-                               "receiveaddress": dboperator.searchExport(searchField.text)[i].getReceiveaddress,
-                               "receivephone": dboperator.searchExport(searchField.text)[i].getReceivephone,
-                               "remark": dboperator.searchExport(searchField.text)[i].getRemark})
+            var list = dboperator.searchExport(searchField.text)
+            for(var i = 0; i < list.length; i++){
+                model1.append({"eserialID": list[i].getEserialID,
+                               "totalprice": list[i].getTotalprice.toString(),
+                               "quality": list[i].getQuality.toString(),
+                               "userID": list[i].getUserID,
+                               "receivename": list[i].getReceivename,
+                               "receiveaddress": list[i].getReceiveaddress,
+                               "receivephone": list[i].getReceivephone,
+                               "remark": list[i].getRemark})
             }
         }
     }

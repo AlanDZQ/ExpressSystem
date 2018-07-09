@@ -26,7 +26,8 @@ SOURCES += \
     importgood.cpp \
     export.cpp \
     exportgood.cpp \
-    exportstatus.cpp
+    exportstatus.cpp \
+    usermanage.cpp
 
 RESOURCES += qml.qrc \
 user.png \
@@ -37,6 +38,7 @@ save.png \
 redo.png \
 undo.png \
 view.png \
+default.png \
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -61,3 +63,4 @@ HEADERS += \
     export.h\
     exportgood.h \
     exportstatus.h \
+    usermanage.h

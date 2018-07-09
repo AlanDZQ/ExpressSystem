@@ -14,6 +14,8 @@ class Good : public QObject
     Q_PROPERTY(int getAmount READ getAmount WRITE setAmount NOTIFY changed)
     Q_PROPERTY(double getPrice READ getPrice WRITE setPrice NOTIFY changed)
     Q_PROPERTY(QString getDescription READ getDescription WRITE setDescription NOTIFY changed)
+    Q_PROPERTY(QString getLocation READ getLocation WRITE setLocation NOTIFY changed)
+
 
 
 private:
@@ -23,6 +25,7 @@ private:
     int amount;
     double price;
     QString description;
+    QString location;
 
 
 public:
@@ -32,8 +35,9 @@ public:
          QString supplierID,
          int amount,
          double price,
-         QString description) : goodID(goodID),warehouseID(warehouseID),supplierID(supplierID),amount(amount),price(price),
-        description(description){}
+         QString description,
+         QString location) : goodID(goodID),warehouseID(warehouseID),supplierID(supplierID),amount(amount),price(price),
+        description(description),location(location){}
 
     void setGoodID(QString goodID) {
         this->goodID = goodID;
@@ -52,6 +56,9 @@ public:
     }
     void setDescription(QString description){
         this->description = description;
+    }
+    void setLocation(QString location){
+        this->location = location;
     }
 
 
@@ -72,6 +79,9 @@ public:
     }
     QString getDescription(){
         return this->description;
+    }
+    QString getLocation(){
+        return this->location;
     }
 
 signals:

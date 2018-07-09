@@ -82,9 +82,10 @@ Item {
 
     function refresh1(){
         model1.clear()
-        for(var i = 0; i < dboperator.searchExportGood(eserialID).length; i++){
-            model1.append({"goodID": dboperator.searchExportGood(eserialID)[i].getGoodID,
-                           "amount": dboperator.searchExportGood(eserialID)[i].getAmount.toString()})
+        var list = dboperator.searchExportGood(eserialID)
+        for(var i = 0; i < list.length; i++){
+            model1.append({"goodID": list[i].getGoodID,
+                           "amount": list[i].getAmount.toString()})
         }
     }
 
@@ -135,12 +136,14 @@ Item {
                         MenuItem {
                             text: "Undo"
                             onTriggered: {
+                                dboperator.undo()
                                 refresh1()
                             }
                         }
                         MenuItem {
                             text: "Redo"
                             onTriggered: {
+                                dboperator.redo()
                                 refresh1()
                             }
                         }
@@ -222,6 +225,7 @@ Item {
             height: 40
             anchors.top: parent.top
             text:  model1.get(view1.currentIndex).goodID
+            color: "#6C6C6C"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
 
@@ -334,7 +338,8 @@ Item {
             width: parent.width
             height: 40
             anchors.top: parent.top
-            text:  "Add new good"
+            text:  "ADD NEW GOOD"
+            color: "#6C6C6C"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
 
@@ -417,7 +422,7 @@ Item {
         Button {
             x: 103
             y: 204
-            text: "ok"
+            text: "Add Data"
             Material.background: "#20B2AA"
             Material.foreground: "#FFFFFF"
             onClicked: {
@@ -433,9 +438,27 @@ Item {
         }
 
         Button {
+            x: 200
+            y: 204
+            text: "Add Good"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                if(addField1.text === ""||addField2.text==="")
+                    addWarning1.visible = true
+                else{
+                    dboperator.addEG(eserialID, addField1.text, addField2.text)
+                    addWarning1.visible = false
+                    addPopup1.close()
+                    refresh1()
+                }
+            }
+        }
+
+        Button {
             x: 341
             y: 204
-            text: "cancel"
+            text: "Cancel"
             Material.background: "#20B2AA"
             Material.foreground: "#FFFFFF"
             onClicked: {
@@ -478,9 +501,10 @@ Item {
 
     function refresh2(){
         model2.clear()
-        for(var i = 0; i < dboperator.searchExportStatus(eserialID).length; i++){
-            model2.append({"time": Qt.formatDateTime(dboperator.searchExportStatus(eserialID)[i].getTime, "yyyy-MM-dd hh:mm:ss").toString(),
-                           "status": dboperator.searchExportStatus(eserialID)[i].getStatus})
+        var list = dboperator.searchExportStatus(eserialID)
+        for(var i = 0; i < list.length; i++){
+            model2.append({"time": Qt.formatDateTime(list[i].getTime, "yyyy-MM-dd hh:mm:ss").toString(),
+                           "status": list[i].getStatus})
         }
     }
 
@@ -523,7 +547,7 @@ Item {
                         MenuItem {
                             text: "Delete"
                             onTriggered: {
-                                dboperator.delExportGood(eserialID, model2.get(view2.currentIndex).time)
+                                dboperator.delExportStatus(eserialID, model2.get(view2.currentIndex).time)
                                 refresh2()
                             }
                         }
@@ -531,12 +555,14 @@ Item {
                         MenuItem {
                             text: "Undo"
                             onTriggered: {
+                                dboperator.undo()
                                 refresh2()
                             }
                         }
                         MenuItem {
                             text: "Redo"
                             onTriggered: {
+                                dboperator.redo()
                                 refresh2()
                             }
                         }
@@ -620,6 +646,7 @@ Item {
             height: 40
             anchors.top: parent.top
             text: model2.get(view2.currentIndex).time
+            color: "#6C6C6C"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
 
@@ -732,7 +759,8 @@ Item {
             width: parent.width
             height: 40
             anchors.top: parent.top
-            text:  "Add new status"
+            text:  "ADD NEW STATUS"
+            color: "#6C6C6C"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
 
