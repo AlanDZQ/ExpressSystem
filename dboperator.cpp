@@ -473,7 +473,7 @@ void DBOperator::addImportFull(QString iserialID,
     int amountOfGood;
 
 
-    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.WAREHOUSE_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
+    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.GOODS_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
             .arg(warehouseID, goodID);
 
     query4.exec(sqlquery4);
@@ -886,7 +886,7 @@ void DBOperator::delExportFull(QString eserialID,
     delExportGood(eserialID,goodID);
     delExportStatus(eserialID,goodID);
 
-    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.WAREHOUSE_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
+    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.GOODS_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
             .arg(warehouseID, goodID);
 
     query4.exec(sqlquery4);
@@ -933,7 +933,7 @@ void DBOperator::delEG(QString eserialID,
 
     delExportGood(eserialID,goodID);
 
-    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.WAREHOUSE_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
+    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.GOODS_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
             .arg(warehouseID, goodID);
 
     query4.exec(sqlquery4);
@@ -975,7 +975,7 @@ void DBOperator::delImportFull(QString iserialID,
     delImportGoodinfo(iserialID,goodID);
     QSqlQuery query4;
     QSqlQuery query5;
-    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.WAREHOUSE_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
+    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.GOODS_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
             .arg(warehouseID, goodID);
 
     query4.exec(sqlquery4);
@@ -1018,7 +1018,7 @@ void DBOperator::delIG(QString iserialID,
     delImportGoodinfo(iserialID,goodID);
     QSqlQuery query4;
     QSqlQuery query5;
-    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.WAREHOUSE_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
+    QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.GOODS_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
             .arg(warehouseID, goodID);
 
     query4.exec(sqlquery4);
