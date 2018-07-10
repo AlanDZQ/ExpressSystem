@@ -17,18 +17,7 @@ Item {
     property string wagecardID: ""
     property string url: ""
 
-    Component.onCompleted: {
-        var list = dboperator.searchUser(userID)
-        password = list[0].getPassword
-        name = list[0].getName
-        gender = list[0].getGender
-        age =  list[0].getAge.toString()
-        privliege =  list[0].getPrivilege
-        salary = list[0].getSalary.toString()
-        email = list[0].getEmail
-        phone = list[0].getPhone
-        wagecardID = list[0].getWagecardID
-    }
+
 
     ToolBar {
         z:2
@@ -71,7 +60,6 @@ Item {
                         dboperator.editUserinfo(userID,field1.text,field2.text,field3.text,field4.text,field5.text,
                                                 field6.text,field7.text,field8.text,field9.text)
                         homeStackView.pop()
-                        homeStackView.push("PeopleForm.qml")
                         overTimer.stop();
                         if (subWindow.visible === true) return;
                         info.text = "Saved successfully!"

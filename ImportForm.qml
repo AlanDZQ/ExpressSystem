@@ -221,7 +221,7 @@ Item {
         Label {
             id: addWarning1
             x: parent.width/2 - 125
-            y: 100
+            y: 50
             width: 250
             height: 50
             Material.accent: "#20B2AA"
@@ -237,7 +237,7 @@ Item {
         TextField {
             id: addField1
             x: parent.width/2 - 125
-            y: parent.height/2 - 150
+            y: parent.height/2 - 200
             width: 250
             height: 50
             Material.accent: "#20B2AA"
@@ -249,7 +249,7 @@ Item {
         TextField {
             id: addField2
             x: parent.width/2 - 125
-            y: parent.height/2 - 100
+            y: parent.height/2 - 150
             width: 250
             height: 50
             Material.accent: "#20B2AA"
@@ -261,7 +261,7 @@ Item {
         TextField {
             id: addField3
             x: parent.width/2 - 125
-            y: parent.height/2 - 50
+            y: parent.height/2 - 100
             width: 250
             height: 50
             Material.accent: "#20B2AA"
@@ -273,7 +273,7 @@ Item {
         TextField {
             id: addField4
             x: parent.width/2 - 125
-            y: parent.height/2
+            y: parent.height/2 -50
             width: 250
             height: 50
             Material.accent: "#20B2AA"
@@ -285,7 +285,7 @@ Item {
         TextField {
             id: addField5
             x: parent.width/2 - 125
-            y: parent.height/2 + 50
+            y: parent.height/2
             width: 250
             height: 50
             Material.accent: "#20B2AA"
@@ -294,14 +294,223 @@ Item {
             placeholderText: "Enter the Time"
         }
 
+        RoundButton {
+            id: roundButton1
+            x: addField5.x + addField5.width + 10
+            y: parent.height/2
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            text: "+"
+            onClicked:{
+                addField5.text = Qt.formatDateTime(new Date(), "yyyy-MM-dd hh:mm:ss")
+            }
+        }
+
+//        RoundButton {
+//            id: roundButton2
+//            x: addField5.x + addField5.width + 60
+//            y: parent.height/2
+//            Material.background: "#20B2AA"
+//            Material.foreground: "#FFFFFF"
+//            text: "::"
+//            onClicked:{
+//                calender.open()
+//            }
+//        }
+
+//        Popup{
+//            id: calender
+//            x: parent.width/2 - deletePopup1.width/2
+//            y: parent.height/2 - deletePopup1.height/2
+//            width: 530
+//            height: 300
+//            modal: true
+//            focus: true
+//            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+//            Text {
+//                width: parent.width
+//                height: 40
+//                anchors.top: parent.top
+//                text:  "CALENDER"
+//                color: "#6C6C6C"
+//                horizontalAlignment: Text.AlignHCenter
+//                verticalAlignment: Text.AlignVCenter
+
+//                MouseArea {
+//                    property point clickPoint: "0,0"
+
+//                    anchors.fill: parent
+//                    acceptedButtons: Qt.LeftButton
+//                    onPressed: {
+//                        clickPoint  = Qt.point(mouse.x, mouse.y)
+//                    }
+//                    onPositionChanged: {
+//                        var offset = Qt.point(mouse.x - clickPoint.x, mouse.y - clickPoint.y)
+//                        setDlgPoint(offset.x, offset.y)
+//                    }
+//                    function setDlgPoint(dlgX ,dlgY)
+//                    {
+//                        //设置窗口拖拽不能超过父窗口
+//                        if(deletePopup1.x + dlgX < 0){
+//                            deletePopup1.x = 0
+//                        }
+//                        else if(deletePopup1.x + dlgX > deletePopup1.parent.width - deletePopup1.width){
+//                            deletePopup1.x = deletePopup1.parent.width - deletePopup1.width
+//                        }
+//                        else{
+//                            deletePopup1.x = deletePopup1.x + dlgX
+//                        }
+//                        if(deletePopup1.y + dlgY < 0){
+//                            deletePopup1.y = 0
+//                        }
+//                        else if(deletePopup1.y + dlgY > deletePopup1.parent.height - deletePopup1.height){
+//                            deletePopup1.y = deletePopup1.parent.height - deletePopup1.height
+//                        }
+//                        else{
+//                            deletePopup1.y = deletePopup1.y + dlgY
+//                        }
+//                    }
+//                }
+//            }
+
+
+
+//            Row {
+//                id: row
+//                x: parent.width - 150
+//                y: 0
+//                width: 150
+
+//                Tumbler {
+//                    id: hoursTumbler
+//                    width: 50
+//                    model: 24
+//                    delegate: delegateComponent
+//                }
+
+//                Tumbler {
+//                    id: minutesTumbler
+//                    width: 50
+//                    model: 60
+//                    delegate: delegateComponent
+//                }
+
+//                Tumbler {
+//                    id: secondTumbler
+//                    width: 50
+//                    model: 60
+//                    delegate: delegateComponent
+//                }
+//            }
+
+
+//            Button {
+//                x: 103
+//                y: 204
+//                text: "OK"
+//                Material.background: "#20B2AA"
+//                Material.foreground: "#FFFFFF"
+//                onClicked: {
+//                    addField5.text
+//                    calender.close()
+//                }
+//            }
+
+//            Button {
+//                x: 341
+//                y: 204
+//                text: "cancel"
+//                Material.background: "#20B2AA"
+//                Material.foreground: "#FFFFFF"
+//                onClicked: {
+//                    calender.close()
+//                }
+//            }
+//        }
+
+        Label {
+            x: parent.width/2 - 125
+            y: parent.height/2 + 50
+            width: 100
+            height: 25
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
+            clip: true
+            color: "#6C6C6C"
+            text: "WarehouseID"
+        }
+
+        ComboBox {
+            id: comboBox2
+            x: parent.width/2 - 125
+            y: parent.height/2 + 75
+            width: 100
+            height: 50
+            model: ListModel {
+                id: model3
+            }
+            Material.accent: "#008080"
+            Component.onCompleted: {
+                model3.clear()
+                var list = dbconnection.openWarehouseinfo()
+                for(var i = 0; i < list.length; i++){
+                    model3.append({text: list[i].getWarehouseID})
+                }
+            }
+            onCurrentTextChanged: {
+                model2.clear()
+                var list = dboperator.searchGoodW(comboBox2.currentText)
+                for(var i = 0; i < list.length; i++){
+                    model2.append({text: list[i].getGoodID})
+                }
+            }
+        }
+
+        Label {
+            x: parent.width/2 + 25
+            y: parent.height/2 +50
+            width: 100
+            height: 25
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
+            clip: true
+            color: "#6C6C6C"
+            text: "GoodID"
+        }
+
+        ComboBox {
+            id: comboBox1
+            x: parent.width/2 + 25
+            y: parent.height/2 + 75
+            width: 100
+            height: 50
+            model: ListModel {
+                id: model2
+            }
+            Material.accent: "#008080"
+        }
+
+        TextField {
+            id: addField6
+            x: parent.width/2 - 125
+            y: parent.height/2 + 125
+            width: 250
+            height: 50
+            Material.accent: "#20B2AA"
+            clip: true
+            selectByMouse: true
+            placeholderText: "Enter the amount"
+        }
+
         Button {
-            x: 100
+            x: 50
             y: parent.height - 100
             text: "add data"
             Material.background: "#20B2AA"
             Material.foreground: "#FFFFFF"
             onClicked: {
-                if(addField1.text === ""||addField2.text===""||addField3.text===""||addField4.text===""||addField5.text==="")
+                if(addField1.text === ""||addField2.text===""||addField3.text===""||addField4.text===""||addField5.text===""||addField5.text===""||comboBox1.currentText==="")
                     addWarning1.visible = true
                 else{
                     dboperator.addImportinfo(addField1.text, addField2.text, addField3.text, addField4.text, addField5.text)
@@ -321,16 +530,17 @@ Item {
         }
 
         Button {
-            x: 200
+            x: 150
             y: parent.height - 100
             text: "Import Item"
             Material.background: "#20B2AA"
             Material.foreground: "#FFFFFF"
             onClicked: {
-                if(addField1.text === ""||addField2.text===""||addField3.text===""||addField4.text===""||addField5.text==="")
+                if(addField1.text === ""||addField2.text===""||addField3.text===""||addField4.text===""||addField5.text===""||addField5.text===""||comboBox1.currentText==="")
                     addWarning1.visible = true
                 else{
-                    dboperator.addImportFull(addField1.text, addField2.text, addField3.text, addField4.text, addField5.text)
+                    dboperator.addImportFull(addField1.text, addField2.text, addField3.text, addField4.text, addField5.text, comboBox1.currentText,
+                                             addField6.text, comboBox2.currentText)
                     addWarning1.visible = false
                     addPopup1.close()
                     refresh1()
@@ -347,7 +557,7 @@ Item {
         }
 
         Button {
-            x: parent.width - 225
+            x: parent.width - 150
             y: parent.height - 100
 
             text: "cancel"

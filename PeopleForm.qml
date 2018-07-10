@@ -157,7 +157,16 @@ Item {
     function viewItem(){
         if(!stackView.busy)
             homeStackView.push("PeopleItem.qml",{
-                                   userID: model1.get(view1.currentIndex).userID
+                                   userID: model1.get(view1.currentIndex).userID,
+                                   password: model1.get(view1.currentIndex).password,
+                                   name:model1.get(view1.currentIndex).name,
+                                   gender:model1.get(view1.currentIndex).gender,
+                                   age:model1.get(view1.currentIndex).age,
+                                   privliege:model1.get(view1.currentIndex).privliege,
+                                   salary:model1.get(view1.currentIndex).salary,
+                                   email:model1.get(view1.currentIndex).email,
+                                   phone:model1.get(view1.currentIndex).phone,
+                                   wagecardID:model1.get(view1.currentIndex).wagecardID
                                })
     }
 

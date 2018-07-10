@@ -256,7 +256,7 @@ Item {
         Label {
             id: addWarning1
             x: parent.width/2 - 125
-            y: 100
+            y: 50
             width: 250
             height: 50
             Material.accent: "#20B2AA"
@@ -273,7 +273,7 @@ Item {
         TextField {
             id: addField1
             x: parent.width/4 - 125
-            y: parent.height/2 - 150
+            y: parent.height/2 - 200
             width: 250
             height: 50
             Material.accent: "#20B2AA"
@@ -285,7 +285,7 @@ Item {
         TextField {
             id: addField2
             x: parent.width/4 - 125
-            y: parent.height/2 - 100
+            y: parent.height/2 - 150
             width: 250
             height: 50
             Material.accent: "#20B2AA"
@@ -297,7 +297,7 @@ Item {
         TextField {
             id: addField3
             x: parent.width/4 - 125
-            y: parent.height/2 - 50
+            y: parent.height/2 - 100
             width: 250
             height: 50
             Material.accent: "#20B2AA"
@@ -309,7 +309,7 @@ Item {
         TextField {
             id: addField4
             x: parent.width/4 - 125
-            y: parent.height/2
+            y: parent.height/2 - 50
             width: 250
             height: 50
             Material.accent: "#20B2AA"
@@ -321,7 +321,7 @@ Item {
         TextField {
             id: addField5
             x: parent.width/4 - 125
-            y: parent.height/2 + 50
+            y: parent.height/2
             width: 250
             height: 50
             Material.accent: "#20B2AA"
@@ -333,7 +333,7 @@ Item {
         TextField {
             id: addField6
             x: parent.width/4 - 125
-            y: parent.height/2 + 100
+            y: parent.height/2 + 50
             width: 250
             height: 50
             Material.accent: "#20B2AA"
@@ -344,8 +344,8 @@ Item {
 
         TextField {
             id: addField7
-            x: parent.width*3/4 - 125
-            y: parent.height/2 - 150
+            x: parent.width/4 - 125
+            y: parent.height/2 + 100
             width: 250
             height: 50
             Material.accent: "#20B2AA"
@@ -357,7 +357,7 @@ Item {
         TextField {
             id: addField8
             x: parent.width*3/4 - 125
-            y: parent.height/2 - 100
+            y: parent.height/2 - 200
             width: 250
             height: 50
             Material.accent: "#20B2AA"
@@ -365,6 +365,70 @@ Item {
             selectByMouse: true
             placeholderText: "Enter the Remark"
         }
+
+
+        Label {
+            x: parent.width*3/4 - 125
+            y: parent.height/2 - 150
+            width: 100
+            height: 50
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
+            clip: true
+            color: "#6C6C6C"
+            text: "WarehouseID"
+        }
+
+        ComboBox {
+            id: comboBox2
+            x: parent.width*3/4 - 125
+            y: parent.height/2- 100
+            width: 100
+            height: 50
+            model: ListModel {
+                id: model3
+            }
+            Material.accent: "#008080"
+            Component.onCompleted: {
+                model3.clear()
+                var list = dbconnection.openWarehouseinfo()
+                for(var i = 0; i < list.length; i++){
+                    model3.append({text: list[i].getWarehouseID})
+                }
+            }
+            onCurrentTextChanged: {
+                model4.clear()
+                var list = dboperator.searchGoodW(comboBox2.currentText)
+                for(var i = 0; i < list.length; i++){
+                    model4.append({text: list[i].getGoodID})
+                }
+            }
+        }
+
+        Label {
+            x: parent.width*3/4 + 25
+            y: parent.height/2 - 150
+            width: 100
+            height: 50
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
+            clip: true
+            color: "#6C6C6C"
+            text: "GoodID"
+        }
+
+        ComboBox {
+            id: comboBox1
+            x: parent.width*3/4 + 25
+            y: parent.height/2 - 100
+            width: 100
+            height: 50
+            model: ListModel {
+                id: model4
+            }
+            Material.accent: "#008080"
+        }
+
 
         TextField {
             id: addField9
@@ -375,7 +439,7 @@ Item {
             Material.accent: "#20B2AA"
             clip: true
             selectByMouse: true
-            placeholderText: "Enter the GoodID"
+            placeholderText: "Enter the amount"
         }
 
         TextField {
@@ -387,31 +451,39 @@ Item {
             Material.accent: "#20B2AA"
             clip: true
             selectByMouse: true
-            placeholderText: "Enter the Amount of the good"
+            placeholderText: "Enter the time (yyyy-MM-dd hh:mm:ss)"
         }
 
-        TextField {
-            id: addField11
-            x: parent.width*3/4 - 125
+        RoundButton {
+            x: addField10.x + addField10.width - 30
+            y: parent.height/2
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            text: "+"
+            onClicked:{
+                addField10.text = Qt.formatDateTime(new Date(), "yyyy-MM-dd hh:mm:ss")
+            }
+        }
+
+        Label {
+            x: parent.width*3/4 - 100
             y: parent.height/2 + 50
-            width: 250
+            width: 100
             height: 50
-            Material.accent: "#20B2AA"
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
             clip: true
-            selectByMouse: true
-            placeholderText: "Enter the Time"
+            color: "#6C6C6C"
+            text: "Status"
         }
-
-        TextField {
-            id: addField12
+        ComboBox {
+            id: addStatusComboBox
             x: parent.width*3/4 - 125
             y: parent.height/2 + 100
             width: 250
             height: 50
-            Material.accent: "#20B2AA"
-            clip: true
-            selectByMouse: true
-            placeholderText: "Enter the Status"
+            model: ["ORD", "REC", "DEL"]
+            Material.accent: "#008080"
         }
 
         Button {
@@ -422,7 +494,8 @@ Item {
             Material.foreground: "#FFFFFF"
             onClicked: {
                 if(addField1.text === ""||addField2.text===""||addField3.text===""||addField4.text===""||addField5.text===""||addField6.text===""
-                        ||addField7.text===""||addField8.text===""||addField9.text===""||addField10.text===""||addField11.text===""||addField12.text==="")
+                        ||addField7.text===""||addField8.text===""||addField9.text===""||addField10.text===""||addStatusComboBox.currentText===""
+                        ||comboBox1.currentText===""||comboBox2.currentText==="")
                     addWarning1.visible = true
                 else{
                     dboperator.addExport(addField1.text, addField2.text, addField3.text, addField4.text, addField5.text
@@ -450,11 +523,13 @@ Item {
             Material.foreground: "#FFFFFF"
             onClicked: {
                 if(addField1.text === ""||addField2.text===""||addField3.text===""||addField4.text===""||addField5.text===""||addField6.text===""
-                        ||addField7.text===""||addField8.text===""||addField9.text===""||addField10.text===""||addField11.text===""||addField12.text==="")
+                        ||addField7.text===""||addField8.text===""||addField9.text===""||addField10.text===""||addStatusComboBox.currentText===""
+                        ||comboBox1.currentText===""||comboBox2.currentText==="")
                     addWarning1.visible = true
                 else{
-                    dboperator.addExportFull(addField1.text, addField2.text, addField3.text, addField4.text, addField5.text
-                                         , addField6.text, addField7.text, addField8.text)
+                    dboperator.addExportFull(addField1.text, addField2.text, addField3.text, addField4.text, addField5.text,
+                                             addField6.text, addField7.text, addField8.text, comboBox1.currentText, addField9.text,
+                                             addField10.text, addStatusComboBox.currentText, comboBox2.currentText)
                     addWarning1.visible = false
                     addPopup1.close()
                     refresh1()

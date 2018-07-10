@@ -339,11 +339,11 @@ void DBOperator::addExportFull(QString eserialID,//2018年07月06日13:58:02  fu
             .arg(warehouseID, goodID);
 
     query4.exec(sqlquery4);
-    query.next();
-    amountOfGood = query.value(0).toInt() - amount.toInt();
+    query4.next();
+    amountOfGood = query4.value(0).toInt() - amount.toInt();
 
     QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
-                               " amount = '%3'"
+                               " amount = '%3' "
                                "WHERE goodID = '%1' and warehouseID = '%2'")
             .arg(goodID,warehouseID)
             .arg(amountOfGood);
@@ -410,7 +410,7 @@ void DBOperator::addEG(QString eserialID,//2018年07月06日13:58:02
     amountOfGood = query4.value(0).toInt() - amount.toInt();
 
     QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
-                               " amount = '%3'"
+                               " amount = '%3' "
                                "WHERE goodID = '%1' and warehouseID = '%2'")
             .arg(goodID,warehouseID)
             .arg(amountOfGood);
@@ -419,7 +419,7 @@ void DBOperator::addEG(QString eserialID,//2018年07月06日13:58:02
 
     saveOperation(sqlquery2);
 
-
+    undoData.clear();
     undoData.append(eserialID);
     undoData.append(goodID);
     undoData.append(amount);
@@ -460,6 +460,7 @@ void DBOperator::addImportFull(QString iserialID,
                 .arg(totalprice1)
                 .arg(userID)
                 .arg(time);
+    qDebug()<<"****"<<sqlquery;
 
 
 
@@ -468,7 +469,7 @@ void DBOperator::addImportFull(QString iserialID,
             .arg(goodID)
             .arg(amount1);
 
-
+qDebug()<<"****"<<sqlquery2;
 
     int amountOfGood;
 
@@ -476,16 +477,20 @@ void DBOperator::addImportFull(QString iserialID,
     QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.GOODS_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
             .arg(warehouseID, goodID);
 
+    qDebug()<<"****"<<sqlquery4;
+
     query4.exec(sqlquery4);
-    query.next();
-    amountOfGood = query.value(0).toInt() + amount.toInt();
+    query4.next();
+    amountOfGood = query4.value(0).toInt() + amount.toInt();
 
     QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
-                               " amount = '%3'"
+                               " amount = '%3' "
                                "WHERE goodID = '%1' and warehouseID = '%2'")
             .arg(goodID,warehouseID)
             .arg(amountOfGood);
     query5.exec(sqlquery5);
+
+    qDebug()<<"****"<<sqlquery5;
 
     saveOperation(sqlquery);
     undoData.clear();
@@ -894,7 +899,7 @@ void DBOperator::delExportFull(QString eserialID,
     int amountOfGood = query4.value(0).toInt() - amount.toInt();
 
     QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
-                                " amount = '%3'"
+                                " amount = '%3' "
                                 "WHERE goodID = '%1' and warehouseID = '%2'")
             .arg(goodID,warehouseID)
             .arg(amountOfGood);
@@ -941,7 +946,7 @@ void DBOperator::delEG(QString eserialID,
     int amountOfGood = query4.value(0).toInt() - amount.toInt();
 
     QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
-                                " amount = '%3'"
+                                " amount = '%3' "
                                 "WHERE goodID = '%1' and warehouseID = '%2'")
             .arg(goodID,warehouseID)
             .arg(amountOfGood);
@@ -983,7 +988,7 @@ void DBOperator::delImportFull(QString iserialID,
     int amountOfGood = query4.value(0).toInt() - amount.toInt();
 
     QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
-                                " amount = '%3'"
+                                " amount = '%3' "
                                 "WHERE goodID = '%1' and warehouseID = '%2'")
             .arg(goodID,warehouseID)
             .arg(amountOfGood);
@@ -1026,7 +1031,7 @@ void DBOperator::delIG(QString iserialID,
     int amountOfGood = query4.value(0).toInt() - amount.toInt();
 
     QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
-                                " amount = '%3'"
+                                " amount = '%3' "
                                 "WHERE goodID = '%1' and warehouseID = '%2'")
             .arg(goodID,warehouseID)
             .arg(amountOfGood);

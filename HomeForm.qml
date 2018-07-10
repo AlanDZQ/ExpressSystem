@@ -5,6 +5,32 @@ import QtQuick.Controls.Material 2.0
 
 Item {
     property string userID: ""
+    property string password: ""
+    property string name: ""
+    property string gender: ""
+    property string age: ""
+    property string privliege: ""
+    property string salary: ""
+    property string email: ""
+    property string phone: ""
+    property string wagecardID: ""
+    property string url: ""
+
+
+    Component.onCompleted: {
+        var list = dboperator.searchUser(userID)
+        password = list[0].getPassword
+        name = list[0].getName
+        gender = list[0].getGender
+        age =  list[0].getAge.toString()
+        privliege =  list[0].getPrivilege
+        salary = list[0].getSalary.toString()
+        email = list[0].getEmail
+        phone = list[0].getPhone
+        wagecardID = list[0].getWagecardID
+    }
+
+
     StackView {
         id: homeStackView
         x: toolBarLeft.width
@@ -58,7 +84,20 @@ Item {
             text: qsTr("stock")
             checkable: true
             autoExclusive: true
-            onClicked: homeStackView.push("WarehouseForm.qml")
+            onClicked: {
+                if(privliege === "W"||privliege === "T"){
+                    homeStackView.push("WarehouseForm.qml")
+                }else{
+                    overTimer.stop();
+                    if (subWindow.visible === true) return;
+                    info.text= "No Privliege"
+                    subWindow.opacity = 0.0;
+                    subWindow.visible = true;
+                    downAnimation.start();
+                    showAnimation.start();
+                    overTimer.start();
+                }
+            }
         }
 
         ToolButton {
@@ -69,7 +108,20 @@ Item {
             text: qsTr("goods")
             autoExclusive: true
             checkable: true
-            onClicked: homeStackView.push("GoodsForm.qml")
+            onClicked: {
+                if(privliege === "W"||privliege === "T"){
+                    homeStackView.push("GoodsForm.qml")
+                }else{
+                    overTimer.stop();
+                    if (subWindow.visible === true) return;
+                    info.text= "No Privliege"
+                    subWindow.opacity = 0.0;
+                    subWindow.visible = true;
+                    downAnimation.start();
+                    showAnimation.start();
+                    overTimer.start();
+                }
+            }
         }
 
         ToolButton {
@@ -80,7 +132,9 @@ Item {
             text: qsTr("import")
             autoExclusive: true
             checkable: true
-            onClicked: homeStackView.push("ImportForm.qml")
+            onClicked: {
+                homeStackView.push("ImportForm.qml")
+            }
         }
 
         ToolButton {
@@ -102,7 +156,20 @@ Item {
             text: qsTr("people")
             autoExclusive: true
             checkable: true
-            onClicked: homeStackView.push("PeopleForm.qml")
+            onClicked:{
+                if(privliege === "H"||privliege === "T"){
+                    homeStackView.push("PeopleForm.qml")
+                }else{
+                    overTimer.stop();
+                    if (subWindow.visible === true) return;
+                    info.text= "No Privliege"
+                    subWindow.opacity = 0.0;
+                    subWindow.visible = true;
+                    downAnimation.start();
+                    showAnimation.start();
+                    overTimer.start();
+                }
+            }
         }
 
         ToolButton {
@@ -113,7 +180,20 @@ Item {
             text: qsTr("supplier")
             autoExclusive: true
             checkable: true
-            onClicked: homeStackView.push("SupplierForm.qml")
+            onClicked: {
+                if(privliege === "H"||privliege === "T"){
+                    homeStackView.push("SupplierForm.qml")
+                }else{
+                    overTimer.stop();
+                    if (subWindow.visible === true) return;
+                    info.text= "No Privliege"
+                    subWindow.opacity = 0.0;
+                    subWindow.visible = true;
+                    downAnimation.start();
+                    showAnimation.start();
+                    overTimer.start();
+                }
+            }
         }
 
         ToolButton {
@@ -130,7 +210,16 @@ Item {
                 source: "user.png"
             }
             onClicked: homeStackView.push("PeopleItem.qml",{
-                                          userID: userID
+                                              userID: userID,
+                                              password: password,
+                                              name:name,
+                                              gender:gender,
+                                              age:age,
+                                              privliege:privliege,
+                                              salary:salary,
+                                              email:email,
+                                              phone:phone,
+                                              wagecardID:wagecardID
                                       })
 
         }

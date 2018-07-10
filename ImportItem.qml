@@ -378,14 +378,27 @@ Item {
         Label {
             id: addWarning1
             x: parent.width/2 - 125
-            y: parent.height/2 - 75
+            y: parent.height/2 - 100
             width: 250
             height: 50
             Material.accent: "#20B2AA"
+            horizontalAlignment: Text.AlignHCenter
             clip: true
             color: "#20B2AA"
             text: "TextField cannot be null"
             visible: false
+        }
+
+        Label {
+            x: parent.width/2 - 125
+            y: parent.height/2 - 100
+            width: 100
+            height: 50
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
+            clip: true
+            color: "#6C6C6C"
+            text: "WarehouseID"
         }
 
         ComboBox {
@@ -414,9 +427,21 @@ Item {
             }
         }
 
+        Label {
+            x: parent.width/2 + 25
+            y: parent.height/2 - 100
+            width: 100
+            height: 50
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
+            clip: true
+            color: "#6C6C6C"
+            text: "GoodID"
+        }
+
         ComboBox {
             id: comboBox1
-            x: comboBox2.x +100
+            x: parent.width/2 + 25
             y: parent.height/2 - 50
             width: 100
             height: 50
@@ -446,7 +471,7 @@ Item {
             Material.background: "#20B2AA"
             Material.foreground: "#FFFFFF"
             onClicked: {
-                if(addField2.text==="")
+                if(addField2.text===""||comboBox2.currentText===""||comboBox1.currentText==="")
                     addWarning1.visible = true
                 else{
                     dboperator.addImportGoodinfo(iserialID, comboBox1.currentText, addField2.text)
@@ -464,7 +489,7 @@ Item {
             Material.background: "#20B2AA"
             Material.foreground: "#FFFFFF"
             onClicked: {
-                if(addField2.text==="")
+                if(addField2.text===""||comboBox2.currentText===""||comboBox1.currentText==="")
                     addWarning1.visible = true
                 else{
                     dboperator.addIG(iserialID, comboBox1.currentText, addField2.text, comboBox2.currentText)

@@ -394,18 +394,68 @@ Item {
             visible: false
         }
 
-
-        TextField {
-            id: addField1
+        Label {
             x: parent.width/2 - 125
-            y: parent.height/2 - 50
-            width: 250
+            y: parent.height/2 - 100
+            width: 100
             height: 50
-            Material.accent: "#20B2AA"
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
             clip: true
-            selectByMouse: true
-            placeholderText: "Enter the good's ID"
+            color: "#6C6C6C"
+            text: "WarehouseID"
         }
+
+        ComboBox {
+            id: comboBox2
+            x: parent.width/2 - 125
+            y: parent.height/2-50
+            width: 100
+            height: 50
+            model: ListModel {
+                id: model3
+            }
+            Material.accent: "#008080"
+            Component.onCompleted: {
+                model3.clear()
+                var list = dbconnection.openWarehouseinfo()
+                for(var i = 0; i < list.length; i++){
+                    model3.append({text: list[i].getWarehouseID})
+                }
+            }
+            onCurrentTextChanged: {
+                model4.clear()
+                var list = dboperator.searchGoodW(comboBox2.currentText)
+                for(var i = 0; i < list.length; i++){
+                    model4.append({text: list[i].getGoodID})
+                }
+            }
+        }
+
+        Label {
+            x: parent.width/2 + 25
+            y: parent.height/2 - 100
+            width: 100
+            height: 50
+            verticalAlignment: Text.AlignBottom
+            horizontalAlignment: Text.AlignHCenter
+            clip: true
+            color: "#6C6C6C"
+            text: "GoodID"
+        }
+
+        ComboBox {
+            id: comboBox1
+            x: parent.width/2 + 25
+            y: parent.height/2 - 50
+            width: 100
+            height: 50
+            model: ListModel {
+                id: model4
+            }
+            Material.accent: "#008080"
+        }
+
 
         TextField {
             id: addField2
@@ -426,10 +476,10 @@ Item {
             Material.background: "#20B2AA"
             Material.foreground: "#FFFFFF"
             onClicked: {
-                if(addField1.text === ""||addField2.text==="")
+                if(addField2.text===""||comboBox2.currentText===""||comboBox1.currentText==="")
                     addWarning1.visible = true
                 else{
-                    dboperator.addExportGood(eserialID, addField1.text, addField2.text)
+                    dboperator.addExportGood(eserialID, comboBox2.currentText, addField2.text)
                     addWarning1.visible = false
                     addPopup1.close()
                     refresh1()
@@ -444,10 +494,10 @@ Item {
             Material.background: "#20B2AA"
             Material.foreground: "#FFFFFF"
             onClicked: {
-                if(addField1.text === ""||addField2.text==="")
+                if(addField2.text===""||comboBox2.currentText===""||comboBox1.currentText==="")
                     addWarning1.visible = true
                 else{
-                    dboperator.addEG(eserialID, addField1.text, addField2.text)
+                    dboperator.addEG(eserialID,  comboBox1.currentText, addField2.text,comboBox2.currentText)
                     addWarning1.visible = false
                     addPopup1.close()
                     refresh1()
@@ -527,7 +577,7 @@ Item {
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                         onClicked: {
-                            view1.currentIndex = column2.row
+                            view2.currentIndex = column2.row
                             if (mouse.button === Qt.RightButton) {
                                 contentMenu2.popup()
                             }else{
@@ -700,17 +750,15 @@ Item {
             visible: false
         }
 
-
-        TextField {
-            id: textField2
+        ComboBox {
+            id: statusComboBox
             x: parent.width/2 - 125
             y: parent.height/2
             width: 250
             height: 50
-            Material.accent: "#20B2AA"
-            clip: true
-            selectByMouse: true
-            text: model2.get(view2.currentIndex).status
+            model: ["ORD", "REC", "DEL"]
+            Material.accent: "#008080"
+            displayText: model2.get(view2.currentIndex).status
         }
 
         Button {
@@ -720,11 +768,11 @@ Item {
             Material.background: "#20B2AA"
             Material.foreground: "#FFFFFF"
             onClicked: {
-                if(textField2.text == "")
+                if(statusComboBox.currentText ==="")
                     warning2.visible = true
                 else{
                     warning2.visible = false
-                    dboperator.editExportStatus(eserialID, model2.get(view2.currentIndex).time,textField2.text)
+                    dboperator.editExportStatus(eserialID, model2.get(view2.currentIndex).time,statusComboBox.currentText)
                     popup2.close()
                     refresh2()
 
@@ -828,16 +876,26 @@ Item {
             placeholderText: "Enter the time (yyyy-MM-dd hh:mm:ss)"
         }
 
-        TextField {
-            id: addField4
+        RoundButton {
+            id: roundButton1
+            x: addField3.x + addField3.width + 10
+            y: parent.height/2 - 50
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            text: "+"
+            onClicked:{
+                addField3.text = Qt.formatDateTime(new Date(), "yyyy-MM-dd hh:mm:ss")
+            }
+        }
+
+        ComboBox {
+            id: addStatusComboBox
             x: parent.width/2 - 125
             y: parent.height/2
             width: 250
             height: 50
-            Material.accent: "#20B2AA"
-            clip: true
-            selectByMouse: true
-            placeholderText: "Enter the status"
+            model: ["ORD", "REC", "DEL"]
+            Material.accent: "#008080"
         }
 
         Button {
@@ -847,10 +905,10 @@ Item {
             Material.background: "#20B2AA"
             Material.foreground: "#FFFFFF"
             onClicked: {
-                if(addField3.text === ""||addField4.text==="")
+                if(addField3.text === ""||addStatusComboBox.currentText==="")
                     addWarning2.visible = true
                 else{
-                    dboperator.addExportStatus(eserialID, addField3.text, addField4.text)
+                    dboperator.addExportStatus(eserialID, addField3.text, addStatusComboBox.currentText)
                     addWarning2.visible = false
                     addPopup2.close()
                     refresh2()
