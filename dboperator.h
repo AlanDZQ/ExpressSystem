@@ -51,7 +51,8 @@ public slots:
                      QString salary,
                      QString email,
                      QString phone,
-                     QString wagecardID);
+                     QString wagecardID,
+                     QString url);
 
 
 
@@ -199,7 +200,8 @@ public slots:
                      QString salary,
                      QString email,
                      QString phone,
-                     QString wagecardID);
+                     QString wagecardID,
+                     QString url);
 
     void editExport(QString eserialID,
                        QString totalprice,
@@ -251,7 +253,9 @@ public slots:
     QList<QVariant> searchImportGood( QString theOne);
     QList<QVariant> searchSupplier( QString theOne);
     QList<QVariant> searchUser( QString theOne);
+    QString searchURL(QString theOne);
     QList<QVariant> searchWarehouse( QString theOne);
+    QList<QVariant> searchExport_Price_Time();
 
 
     QList<QVariant> sortExport(QString colName, bool asc = true );

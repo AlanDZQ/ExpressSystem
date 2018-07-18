@@ -2,6 +2,7 @@ import QtQuick 2.11
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Material 2.0
+import QtQuick.Dialogs 1.0
 
 Item {
     id:itemForm
@@ -24,13 +25,13 @@ Item {
         var list = dbconnection.openExportInfo()
         for(var i = 0; i < list.length; i++){
             model1.append({"eserialID": list[i].getEserialID,
-                           "totalprice": list[i].getTotalprice.toString(),
-                           "quality": list[i].getQuality.toString(),
-                           "userID": list[i].getUserID,
-                           "receivename": list[i].getReceivename,
-                           "receiveaddress": list[i].getReceiveaddress,
-                           "receivephone": list[i].getReceivephone,
-                           "remark": list[i].getRemark})
+                              "totalprice": list[i].getTotalprice.toString(),
+                              "quality": list[i].getQuality.toString(),
+                              "userID": list[i].getUserID,
+                              "receivename": list[i].getReceivename,
+                              "receiveaddress": list[i].getReceiveaddress,
+                              "receivephone": list[i].getReceivephone,
+                              "remark": list[i].getRemark})
         }
     }
 
@@ -660,6 +661,193 @@ Item {
     }
 
 
+    Popup{
+        id:previewPopup
+        x: parent.width/2 - previewPopup.width/2
+        y: parent.height/2 - previewPopup.height/2
+        width: 600
+        height: 600
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        Text {
+            width: parent.width
+            height: 40
+            anchors.top: parent.top
+            text:  "PREVIEW"
+            color: "#6C6C6C"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+
+            MouseArea {
+                property point clickPoint: "0,0"
+
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton
+                onPressed: {
+                    clickPoint  = Qt.point(mouse.x, mouse.y)
+                }
+                onPositionChanged: {
+                    var offset = Qt.point(mouse.x - clickPoint.x, mouse.y - clickPoint.y)
+                    setDlgPoint(offset.x, offset.y)
+                }
+                function setDlgPoint(dlgX ,dlgY)
+                {
+                    //设置窗口拖拽不能超过父窗口
+                    if(previewPopup.x + dlgX < 0){
+                        previewPopup.x = 0
+                    }
+                    else if(previewPopup.x + dlgX > previewPopup.parent.width - previewPopup.width){
+                        previewPopup.x = previewPopup.parent.width - previewPopup.width
+                    }
+                    else{
+                        previewPopup.x = previewPopup.x + dlgX
+                    }
+                    if(previewPopup.y + dlgY < 0){
+                        previewPopup.y = 0
+                    }
+                    else if(previewPopup.y + dlgY > previewPopup.parent.height - previewPopup.height){
+                        previewPopup.y = previewPopup.parent.height - previewPopup.height
+                    }
+                    else{
+                        previewPopup.y = previewPopup.y + dlgY
+                    }
+                }
+            }
+        }
+
+        ListModel {
+            id: premodel
+        }
+
+        Component {
+            id: predelegate
+            Column {
+                id: column1
+                property int row: index
+                Row {
+                    spacing: 1
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(0).width
+                        text: eserialID
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(1).width
+                        text: totalprice
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(2).width
+                        text: quality
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(3).width
+                        text: userID
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(4).width
+                        text: receivename
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(5).width
+                        text: receiveaddress
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(6).width
+                        text: receivephone
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(7).width
+                        text: remark
+                    }
+                }
+
+                Rectangle {
+                    color: "silver"
+                    width: preview.headerItem.width
+                    height: 1
+                }
+            }
+        }
+
+        ListView {
+            id: preview
+            anchors.topMargin: 50
+            anchors.fill: parent
+            contentWidth: headerItem.width
+            flickableDirection: Flickable.HorizontalAndVerticalFlick
+            highlightFollowsCurrentItem: true
+            header: Row {
+                z: 2
+                spacing: 1
+                function itemAt(index) { return prerepeater.itemAt(index) }
+                Repeater {
+                    id: prerepeater
+                    model: ["EserialID", "Total Price", "Quality", "UserID", "Receive Name", "Receive Address", "Receive Phone", "Remark"]
+                    Label {
+                        text: modelData
+                        color: "#ffffffff"
+                        font.pixelSize: 20
+                        padding: 10
+                        width: previewPopup.width/9
+                        background: Rectangle { color: "#20B2AA"}
+                        MouseArea {
+                            property point clickPoint: "0,0"
+
+                            anchors.fill: parent
+                            acceptedButtons: Qt.LeftButton
+                            onPressed: {
+                                clickPoint  = Qt.point(mouse.x, mouse.y)
+                                parent.parent.parent.parent.flickableDirection = Flickable.VerticalFlick
+                            }
+                            onReleased: parent.parent.parent.parent.flickableDirection = Flickable.HorizontalAndVerticalFlick
+                            onPositionChanged: {
+                                var offset = Qt.point(mouse.x - clickPoint.x, mouse.y - clickPoint.y)
+                                setDlgPoint(offset.x, offset.y)
+                            }
+                            function setDlgPoint(dlgX) {
+                                if(width>=50||dlgX>0)
+                                    parent.width = parent.width + dlgX/100
+                            }
+                        }
+                    }
+                }
+            }
+            headerPositioning: ListView.OverlayHeader
+            model: premodel
+            delegate: predelegate
+            ScrollIndicator.horizontal: ScrollIndicator { }
+            ScrollIndicator.vertical: ScrollIndicator { }
+        }
+
+
+        Button {
+            x:100
+            y: parent.height - 100
+            text: "ReplaceDB"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                excelconnection.saveExportInfo(fileDialogIn.fileUrl)
+                previewPopup.close()
+                refresh1()
+            }
+        }
+
+
+        Button {
+            x: parent.width - 150
+            y: parent.height - 100
+
+            text: "cancel"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                previewPopup.close()
+            }
+        }
+    }
+
 
     ToolBar {
         x: 0
@@ -754,6 +942,140 @@ Item {
         }
 
         ToolButton {
+            x: 240
+            width: 60
+            height: parent.height
+            checkable: false
+            autoExclusive: false
+            focusPolicy: Qt.StrongFocus
+            Image {
+                x:parent.width/2-15
+                y:parent.height/2-17
+                width: 30
+                height: 34
+                source: "out.png"
+            }
+            onClicked: {
+                fileDialogOut.open()
+            }
+        }
+
+        FileDialog {
+            id: fileDialogOut
+            title: "Please choose a file"
+            onAccepted: {
+                console.log("You chose: " + fileDialogOut.fileUrl)
+                excelconnection.dbtoExcel(1, fileDialogOut.fileUrl)
+            }
+            onRejected: {
+                console.log("Canceled")
+            }
+            Component.onCompleted: visible = false
+            selectExisting: false
+        }
+
+        ToolButton {
+            x: 300
+            width: 60
+            height: parent.height
+            checkable: false
+            autoExclusive: false
+            focusPolicy: Qt.StrongFocus
+            Image {
+                x:parent.width/2-15
+                y:parent.height/2-17
+                width: 30
+                height: 34
+                source: "in.png"
+            }
+            onClicked: {
+                fileDialogIn.open()
+            }
+        }
+
+        FileDialog {
+            id: fileDialogIn
+            title: "Please choose a file"
+            onAccepted: {
+                console.log("You chose: " + fileDialogIn.fileUrl)
+                previewPopup.open()
+
+                premodel.clear()
+                var list = excelconnection.openExportInfo(fileDialogIn.fileUrl)
+                for(var i = 0; i < list.length; i++){
+                    console.log(list[i].getEserialID)
+                    premodel.append({"eserialID": list[i].getEserialID,
+                                        "totalprice": list[i].getTotalprice.toString(),
+                                        "quality": list[i].getQuality.toString(),
+                                        "userID": list[i].getUserID,
+                                        "receivename": list[i].getReceivename,
+                                        "receiveaddress": list[i].getReceiveaddress,
+                                        "receivephone": list[i].getReceivephone,
+                                        "remark": list[i].getRemark})
+                }
+
+            }
+            onRejected: {
+                console.log("Canceled")
+            }
+            Component.onCompleted: visible = false
+        }
+
+        ToolButton {
+            x: 360
+            width: 60
+            height: parent.height
+            checkable: false
+            autoExclusive: false
+            focusPolicy: Qt.StrongFocus
+            Image {
+                x:parent.width/2-15
+                y:parent.height/2-15
+                width: 30
+                height: 30
+                source: "chart.png"
+            }
+            onClicked: {
+                homeStackView.push("ExportChart.qml")
+            }
+        }
+
+
+        ToolButton {
+            x: 420
+            width: 60
+            height: parent.height
+            checkable: false
+            autoExclusive: false
+            focusPolicy: Qt.StrongFocus
+            Image {
+                x:parent.width/2-15
+                y:parent.height/2-15
+                width: 30
+                height: 30
+                source: "list.png"
+            }
+            onClicked: {
+                fileDialogOut2.open()
+            }
+        }
+
+        FileDialog {
+            id: fileDialogOut2
+            title: "Please choose a file"
+            onAccepted: {
+                console.log("You chose: " + fileDialogOut2.fileUrl)
+                pdfgenerate.orderListGenerate(model1.get(view1.currentIndex).eserialID, fileDialogOut2.fileUrl+"-order.pdf")
+                pdfgenerate.deliveryGenerate(model1.get(view1.currentIndex).eserialID, fileDialogOut2.fileUrl+"-delivery.pdf")
+            }
+            onRejected: {
+                console.log("Canceled")
+            }
+            Component.onCompleted: visible = false
+            selectExisting: false
+        }
+
+        ToolButton {
             id: viewButton
             x: parent.width - 60
             width: 60
@@ -792,7 +1114,7 @@ Item {
 
         ComboBox {
             id: sortBox
-            x: parent.width - 400
+            x: parent.width - 360
             width: 150
             height: 50
             Material.accent: "#008080"
@@ -803,6 +1125,7 @@ Item {
             }
         }
     }
+
 
     function sort(index){
         model1.clear()
@@ -829,13 +1152,13 @@ Item {
         var list = dboperator.sortExport(keyWord)
         for(var i = 0; i < list.length; i++){
             model1.append({"eserialID": list[i].getEserialID,
-                           "totalprice": list[i].getTotalprice.toString(),
-                           "quality": list[i].getQuality.toString(),
-                           "userID": list[i].getUserID,
-                           "receivename": list[i].getReceivename,
-                           "receiveaddress": list[i].getReceiveaddress,
-                           "receivephone": list[i].getReceivephone,
-                           "remark": list[i].getRemark})
+                              "totalprice": list[i].getTotalprice.toString(),
+                              "quality": list[i].getQuality.toString(),
+                              "userID": list[i].getUserID,
+                              "receivename": list[i].getReceivename,
+                              "receiveaddress": list[i].getReceiveaddress,
+                              "receivephone": list[i].getReceivephone,
+                              "remark": list[i].getRemark})
         }
     }
 
@@ -847,13 +1170,13 @@ Item {
             var list = dboperator.searchExport(searchField.text)
             for(var i = 0; i < list.length; i++){
                 model1.append({"eserialID": list[i].getEserialID,
-                               "totalprice": list[i].getTotalprice.toString(),
-                               "quality": list[i].getQuality.toString(),
-                               "userID": list[i].getUserID,
-                               "receivename": list[i].getReceivename,
-                               "receiveaddress": list[i].getReceiveaddress,
-                               "receivephone": list[i].getReceivephone,
-                               "remark": list[i].getRemark})
+                                  "totalprice": list[i].getTotalprice.toString(),
+                                  "quality": list[i].getQuality.toString(),
+                                  "userID": list[i].getUserID,
+                                  "receivename": list[i].getReceivename,
+                                  "receiveaddress": list[i].getReceiveaddress,
+                                  "receivephone": list[i].getReceivephone,
+                                  "remark": list[i].getRemark})
             }
         }
     }

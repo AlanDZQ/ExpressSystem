@@ -58,7 +58,7 @@ Item {
                         warning3.visible=true
                     }else{
                         dboperator.editUserinfo(userID,field1.text,field2.text,field3.text,field4.text,field5.text,
-                                                field6.text,field7.text,field8.text,field9.text)
+                                                field6.text,field7.text,field8.text,field9.text, field10.text)
                         homeStackView.pop()
                         overTimer.stop();
                         if (subWindow.visible === true) return;
@@ -97,7 +97,97 @@ Item {
         y: 100
         width: parent.width/4
         height: (parent.height-100)*3/5
-        source: "default.png"
+        Component.onCompleted: {
+            if(url!=="")
+                photo.source=url
+            else
+                photo.source="default.png"
+        }
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                photoPopup.open()
+            }
+        }
+    }
+
+    Popup{
+        id: photoPopup
+        x: parent.width/2 - photoPopup.width/2
+        y: parent.height/2 - photoPopup.height/2
+        width: 530
+        height: 300
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        Text {
+            width: parent.width
+            height: 40
+            anchors.top: parent.top
+            text:  "CHOOSE PHOTO"
+            color: "#6C6C6C"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+
+            MouseArea {
+                property point clickPoint: "0,0"
+
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton
+                onPressed: {
+                    clickPoint  = Qt.point(mouse.x, mouse.y)
+                }
+                onPositionChanged: {
+                    var offset = Qt.point(mouse.x - clickPoint.x, mouse.y - clickPoint.y)
+                    setDlgPoint(offset.x, offset.y)
+                }
+                function setDlgPoint(dlgX ,dlgY)
+                {
+                    //设置窗口拖拽不能超过父窗口
+                    if(photoPopup.x + dlgX < 0){
+                        photoPopup.x = 0
+                    }
+                    else if(photoPopup.x + dlgX > photoPopup.parent.width - photoPopup.width){
+                        photoPopup.x = photoPopup.parent.width - photoPopup.width
+                    }
+                    else{
+                        photoPopup.x = photoPopup.x + dlgX
+                    }
+                    if(photoPopup.y + dlgY < 0){
+                        photoPopup.y = 0
+                    }
+                    else if(photoPopup.y + dlgY > photoPopup.parent.height - photoPopup.height){
+                        photoPopup.y = photoPopup.parent.height - photoPopup.height
+                    }
+                    else{
+                        photoPopup.y = photoPopup.y + dlgY
+                    }
+                }
+            }
+        }
+        TextField{
+            id: field10
+            x:parent.width/2-125
+            y:parent.height/2-25
+            width: 250
+            height: 50
+            Material.accent: "#20B2AA"
+            placeholderText: "Enter your Pic URL"
+        }
+
+        Button {
+            x:parent.width/2-125
+            y:parent.height/2+25
+            width: 250
+            height: 50
+            text: "choose"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                photoPopup.close()
+            }
+        }
     }
 
     Label {

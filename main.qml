@@ -4,6 +4,8 @@ import QtQuick.Dialogs 1.0
 import QtQuick.Window 2.0
 import DBConnection 1.0
 import DBOperator 1.0
+import Excelconnection 1.0
+import Pdfgenerate 1.0
 import QtQuick.Controls.Material 2.0
 
 ApplicationWindow {
@@ -16,41 +18,19 @@ ApplicationWindow {
         id: dboperator
     }
 
+    Excelconnection{
+        id: excelconnection
+    }
+
+    Pdfgenerate{
+        id: pdfgenerate
+    }
+
     id: window
     visible: true
-    width: 800
-    height: 600
+    width: 900
+    height: 700
     title: qsTr("System")
-//    menuBar: MenuBar {
-//        Menu {
-//            title: qsTr("&File")
-//            Action { text: qsTr("&New...") }
-//            Action {
-//                text: qsTr("&Open...")
-//                onTriggered: fileDialog.visible = true;
-//            }
-//            Action { text: qsTr("&Save") }
-//            Action { text: qsTr("Save &As...") }
-//            MenuSeparator { height: 20 }
-//            Action { text: qsTr("&Quit")
-//                onTriggered: Qt.quit()
-//            }
-//        }
-//        Menu {
-//            title: qsTr("&Edit")
-//            Action { text: qsTr("&Cut")
-//                onTriggered: nameField.cut()
-//            }
-//            Action { text: qsTr("&Copy")
-//                onTriggered: nameField.copy()}
-//            Action { text: qsTr("&Paste")
-//                onTriggered: nameField.paste()}
-//        }
-//        Menu {
-//            title: qsTr("&Help")
-//            Action { text: qsTr("&About")}
-//        }
-//    }
 
     Drawer {
         id: menu
@@ -82,18 +62,6 @@ ApplicationWindow {
         id: stackView
         initialItem: "LoginForm.qml"
         anchors.fill: parent
-    }
-
-    FileDialog {
-        id: fileDialog
-        title: "Please choose a file"
-        onAccepted: {
-            console.log("You chose: " + fileDialog.fileUrls)
-        }
-        onRejected: {
-            console.log("Canceled")
-        }
-        Component.onCompleted: visible = false
     }
 
     Timer{

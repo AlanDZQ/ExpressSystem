@@ -17,5 +17,8 @@
         <file>WarehouseItem.qml</file>
         <file>SupplierItem.qml</file>
         <file>PeopleItem.qml</file>
+        <file>GoodsChart.qml</file>
+        <file>ExportChart.qml</file>
+        <file>ImportChart.qml</file>
     </qresource>
 </RCC>

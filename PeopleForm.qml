@@ -2,6 +2,7 @@ import QtQuick 2.11
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Material 2.0
+import QtQuick.Dialogs 1.0
 
 Item {
     id:itemForm
@@ -166,7 +167,8 @@ Item {
                                    salary:model1.get(view1.currentIndex).salary,
                                    email:model1.get(view1.currentIndex).email,
                                    phone:model1.get(view1.currentIndex).phone,
-                                   wagecardID:model1.get(view1.currentIndex).wagecardID
+                                   wagecardID:model1.get(view1.currentIndex).wagecardID,
+                                   url:dboperator.searchURL(model1.get(view1.currentIndex).userID)
                                })
     }
 
@@ -414,6 +416,18 @@ Item {
             placeholderText: "Enter the WagecardID"
         }
 
+        TextField {
+            id: addField11
+            x: parent.width/2 - 125
+            y: parent.height/2 + 100
+            width: 250
+            height: 50
+            Material.accent: "#20B2AA"
+            clip: true
+            selectByMouse: true
+            placeholderText: "Enter the PictureURL"
+        }
+
         Button {
             x: 100
             y: parent.height - 100
@@ -426,7 +440,7 @@ Item {
                     addWarning1.visible = true
                 else{
                     dboperator.addUserinfo(addField1.text, addField2.text, addField3.text, addField4.text, addField5.text,
-                                           addField6.text, addField7.text, addField8.text, addField9.text, addField10.text)
+                                           addField6.text, addField7.text, addField8.text, addField9.text, addField10.text, addField11.text)
                     addWarning1.visible = false
                     addPopup1.close()
                     refresh1()
@@ -556,7 +570,200 @@ Item {
         }
     }
 
+    Popup{
+        id:previewPopup
+        x: parent.width/2 - previewPopup.width/2
+        y: parent.height/2 - previewPopup.height/2
+        width: 600
+        height: 600
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
+        Text {
+            width: parent.width
+            height: 40
+            anchors.top: parent.top
+            text:  "PREVIEW"
+            color: "#6C6C6C"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+
+            MouseArea {
+                property point clickPoint: "0,0"
+
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton
+                onPressed: {
+                    clickPoint  = Qt.point(mouse.x, mouse.y)
+                }
+                onPositionChanged: {
+                    var offset = Qt.point(mouse.x - clickPoint.x, mouse.y - clickPoint.y)
+                    setDlgPoint(offset.x, offset.y)
+                }
+                function setDlgPoint(dlgX ,dlgY)
+                {
+                    //设置窗口拖拽不能超过父窗口
+                    if(previewPopup.x + dlgX < 0){
+                        previewPopup.x = 0
+                    }
+                    else if(previewPopup.x + dlgX > previewPopup.parent.width - previewPopup.width){
+                        previewPopup.x = previewPopup.parent.width - previewPopup.width
+                    }
+                    else{
+                        previewPopup.x = previewPopup.x + dlgX
+                    }
+                    if(previewPopup.y + dlgY < 0){
+                        previewPopup.y = 0
+                    }
+                    else if(previewPopup.y + dlgY > previewPopup.parent.height - previewPopup.height){
+                        previewPopup.y = previewPopup.parent.height - previewPopup.height
+                    }
+                    else{
+                        previewPopup.y = previewPopup.y + dlgY
+                    }
+                }
+            }
+        }
+
+        ListModel {
+            id: premodel
+        }
+
+        Component {
+            id: predelegate
+            Column {
+                id: column1
+                property int row: index
+                Row {
+                    spacing: 1
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(0).width
+                        text: userID
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(1).width
+                        text: password
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(2).width
+                        text: name
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(3).width
+                        text: gender
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(4).width
+                        text: age
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(5).width
+                        text: privliege
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(6).width
+                        text: salary
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(7).width
+                        text: email
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(8).width
+                        text: phone
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(9).width
+                        text: wagecardID
+                    }
+                }
+
+                Rectangle {
+                    color: "silver"
+                    width: preview.headerItem.width
+                    height: 1
+                }
+            }
+        }
+
+        ListView {
+            id: preview
+            anchors.topMargin: 50
+            anchors.fill: parent
+            contentWidth: headerItem.width
+            flickableDirection: Flickable.HorizontalAndVerticalFlick
+            highlightFollowsCurrentItem: true
+            header: Row {
+                z: 2
+                spacing: 1
+                function itemAt(index) { return prerepeater.itemAt(index) }
+                Repeater {
+                    id: prerepeater
+                    model: ["UserID", "Password", "Name", "Gender", "Age", "Privliege", "Salary", "Email", "Phone", "WagecardID"]
+                    Label {
+                        text: modelData
+                        color: "#ffffffff"
+                        font.pixelSize: 20
+                        padding: 10
+                        width: previewPopup.width/11
+                        background: Rectangle { color: "#20B2AA"}
+                        MouseArea {
+                            property point clickPoint: "0,0"
+
+                            anchors.fill: parent
+                            acceptedButtons: Qt.LeftButton
+                            onPressed: {
+                                clickPoint  = Qt.point(mouse.x, mouse.y)
+                                parent.parent.parent.parent.flickableDirection = Flickable.VerticalFlick
+                            }
+                            onReleased: parent.parent.parent.parent.flickableDirection = Flickable.HorizontalAndVerticalFlick
+                            onPositionChanged: {
+                                var offset = Qt.point(mouse.x - clickPoint.x, mouse.y - clickPoint.y)
+                                setDlgPoint(offset.x, offset.y)
+                            }
+                            function setDlgPoint(dlgX) {
+                                if(width>=50||dlgX>0)
+                                    parent.width = parent.width + dlgX/100
+                            }
+                        }
+                    }
+                }
+            }
+            headerPositioning: ListView.OverlayHeader
+            model: premodel
+            delegate: predelegate
+            ScrollIndicator.horizontal: ScrollIndicator { }
+            ScrollIndicator.vertical: ScrollIndicator { }
+        }
+
+
+        Button {
+            x:100
+            y: parent.height - 100
+            text: "ReplaceDB"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                excelconnection.saveUserinfo(fileDialogIn.fileUrl)
+                previewPopup.close()
+                refresh1()
+            }
+        }
+
+
+        Button {
+            x: parent.width - 150
+            y: parent.height - 100
+
+            text: "cancel"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                previewPopup.close()
+            }
+        }
+    }
 
     ToolBar {
         x: 0
@@ -651,6 +858,88 @@ Item {
         }
 
         ToolButton {
+            x: 240
+            width: 60
+            height: parent.height
+            checkable: false
+            autoExclusive: false
+            focusPolicy: Qt.StrongFocus
+            Image {
+                x:parent.width/2-15
+                y:parent.height/2-17
+                width: 30
+                height: 34
+                source: "out.png"
+            }
+            onClicked: {
+                fileDialogOut.open()
+            }
+        }
+
+        FileDialog {
+            id: fileDialogOut
+            title: "Please choose a file"
+            onAccepted: {
+                console.log("You chose: " + fileDialogOut.fileUrl)
+                excelconnection.dbtoExcel(8, fileDialogOut.fileUrl)
+            }
+            onRejected: {
+                console.log("Canceled")
+            }
+            Component.onCompleted: visible = false
+            selectExisting: false
+        }
+
+        ToolButton {
+            x: 300
+            width: 60
+            height: parent.height
+            checkable: false
+            autoExclusive: false
+            focusPolicy: Qt.StrongFocus
+            Image {
+                x:parent.width/2-15
+                y:parent.height/2-17
+                width: 30
+                height: 34
+                source: "in.png"
+            }
+            onClicked: {
+                fileDialogIn.open()
+            }
+        }
+
+        FileDialog {
+            id: fileDialogIn
+            title: "Please choose a file"
+            onAccepted: {
+                console.log("You chose: " + fileDialogIn.fileUrl)
+                previewPopup.open()
+
+                premodel.clear()
+                var list = excelconnection.openUserinfo(fileDialogIn.fileUrl)
+                for(var i = 0; i < list.length; i++){
+                    premodel.append({"userID": list[i].getUserID,
+                                   "password": list[i].getPassword,
+                                   "name": list[i].getName,
+                                   "gender": list[i].getGender,
+                                   "age": list[i].getAge.toString(),
+                                   "privliege": list[i].getPrivilege,
+                                   "salary": list[i].getSalary.toString(),
+                                   "email": list[i].getEmail,
+                                   "phone": list[i].getPhone,
+                                   "wagecardID": list[i].getWagecardID
+                                  })
+                }
+
+            }
+            onRejected: {
+                console.log("Canceled")
+            }
+            Component.onCompleted: visible = false
+        }
+
+        ToolButton {
             id: viewButton
             x: parent.width - 60
             width: 60
@@ -689,7 +978,7 @@ Item {
 
         ComboBox {
             id: sortBox
-            x: parent.width - 400
+            x: parent.width - 360
             width: 150
             height: 50
             Material.accent: "#008080"

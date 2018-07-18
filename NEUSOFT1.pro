@@ -1,5 +1,7 @@
 QT += quick \
- sql
+ sql \
+qml quick charts\
+printsupport
 
 CONFIG += c++11
 
@@ -13,6 +15,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+QXLSX_PARENTPATH=./         # current QXlsx path is . (. means curret directory)
+QXLSX_HEADERPATH=./header/  # current QXlsx header path is ./header/
+QXLSX_SOURCEPATH=./source/  # current QXlsx source path is ./source/
+include(./QXlsx.pri)
 
 SOURCES += \
         main.cpp \
@@ -27,7 +33,18 @@ SOURCES += \
     export.cpp \
     exportgood.cpp \
     exportstatus.cpp \
-    usermanage.cpp
+    excelconnection.cpp\
+        qrcode/bitstream.c \
+        qrcode/mask.c \
+        qrcode/mmask.c \
+        qrcode/mqrspec.c \
+        qrcode/qrencode.c \
+        qrcode/qrspec.c \
+        qrcode/rscode.c \
+        qrcode/split.c \
+        qrcode/qrinput.c \
+    pdfgenerate.cpp \
+    exportpricetime.cpp
 
 RESOURCES += qml.qrc \
 user.png \
@@ -39,6 +56,10 @@ redo.png \
 undo.png \
 view.png \
 default.png \
+in.png\
+out.png\
+chart.png\
+list.png
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -63,4 +84,20 @@ HEADERS += \
     export.h\
     exportgood.h \
     exportstatus.h \
-    usermanage.h
+    excelconnection.h\
+        qrcode/bitstream.h \
+        qrcode/mask.h \
+        qrcode/mmask.h \
+        qrcode/mqrspec.h \
+        qrcode/qrencode.h \
+        qrcode/qrencode_inner.h \
+        qrcode/qrinput.h \
+        qrcode/qrspec.h \
+        qrcode/rscode.h \
+        qrcode/split.h \
+        qrcode/config.h \
+    pdfgenerate.h \
+    exportpricetime.h
+
+OTHER_FILES += \
+    qrcode/config.h.in

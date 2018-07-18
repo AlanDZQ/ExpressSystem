@@ -219,7 +219,8 @@ Item {
                                               salary:salary,
                                               email:email,
                                               phone:phone,
-                                              wagecardID:wagecardID
+                                              wagecardID:wagecardID,
+                                              url:dboperator.searchURL(userID)
                                       })
 
         }

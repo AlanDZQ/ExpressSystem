@@ -2,6 +2,7 @@ import QtQuick 2.11
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Material 2.0
+import QtQuick.Dialogs 1.0
 
 Item {
     id:itemForm
@@ -306,129 +307,6 @@ Item {
             }
         }
 
-//        RoundButton {
-//            id: roundButton2
-//            x: addField5.x + addField5.width + 60
-//            y: parent.height/2
-//            Material.background: "#20B2AA"
-//            Material.foreground: "#FFFFFF"
-//            text: "::"
-//            onClicked:{
-//                calender.open()
-//            }
-//        }
-
-//        Popup{
-//            id: calender
-//            x: parent.width/2 - deletePopup1.width/2
-//            y: parent.height/2 - deletePopup1.height/2
-//            width: 530
-//            height: 300
-//            modal: true
-//            focus: true
-//            closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-
-//            Text {
-//                width: parent.width
-//                height: 40
-//                anchors.top: parent.top
-//                text:  "CALENDER"
-//                color: "#6C6C6C"
-//                horizontalAlignment: Text.AlignHCenter
-//                verticalAlignment: Text.AlignVCenter
-
-//                MouseArea {
-//                    property point clickPoint: "0,0"
-
-//                    anchors.fill: parent
-//                    acceptedButtons: Qt.LeftButton
-//                    onPressed: {
-//                        clickPoint  = Qt.point(mouse.x, mouse.y)
-//                    }
-//                    onPositionChanged: {
-//                        var offset = Qt.point(mouse.x - clickPoint.x, mouse.y - clickPoint.y)
-//                        setDlgPoint(offset.x, offset.y)
-//                    }
-//                    function setDlgPoint(dlgX ,dlgY)
-//                    {
-//                        //设置窗口拖拽不能超过父窗口
-//                        if(deletePopup1.x + dlgX < 0){
-//                            deletePopup1.x = 0
-//                        }
-//                        else if(deletePopup1.x + dlgX > deletePopup1.parent.width - deletePopup1.width){
-//                            deletePopup1.x = deletePopup1.parent.width - deletePopup1.width
-//                        }
-//                        else{
-//                            deletePopup1.x = deletePopup1.x + dlgX
-//                        }
-//                        if(deletePopup1.y + dlgY < 0){
-//                            deletePopup1.y = 0
-//                        }
-//                        else if(deletePopup1.y + dlgY > deletePopup1.parent.height - deletePopup1.height){
-//                            deletePopup1.y = deletePopup1.parent.height - deletePopup1.height
-//                        }
-//                        else{
-//                            deletePopup1.y = deletePopup1.y + dlgY
-//                        }
-//                    }
-//                }
-//            }
-
-
-
-//            Row {
-//                id: row
-//                x: parent.width - 150
-//                y: 0
-//                width: 150
-
-//                Tumbler {
-//                    id: hoursTumbler
-//                    width: 50
-//                    model: 24
-//                    delegate: delegateComponent
-//                }
-
-//                Tumbler {
-//                    id: minutesTumbler
-//                    width: 50
-//                    model: 60
-//                    delegate: delegateComponent
-//                }
-
-//                Tumbler {
-//                    id: secondTumbler
-//                    width: 50
-//                    model: 60
-//                    delegate: delegateComponent
-//                }
-//            }
-
-
-//            Button {
-//                x: 103
-//                y: 204
-//                text: "OK"
-//                Material.background: "#20B2AA"
-//                Material.foreground: "#FFFFFF"
-//                onClicked: {
-//                    addField5.text
-//                    calender.close()
-//                }
-//            }
-
-//            Button {
-//                x: 341
-//                y: 204
-//                text: "cancel"
-//                Material.background: "#20B2AA"
-//                Material.foreground: "#FFFFFF"
-//                onClicked: {
-//                    calender.close()
-//                }
-//            }
-//        }
-
         Label {
             x: parent.width/2 - 125
             y: parent.height/2 + 50
@@ -671,6 +549,182 @@ Item {
     }
 
 
+    Popup{
+        id:previewPopup
+        x: parent.width/2 - previewPopup.width/2
+        y: parent.height/2 - previewPopup.height/2
+        width: 600
+        height: 600
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+
+        Text {
+            width: parent.width
+            height: 40
+            anchors.top: parent.top
+            text:  "PREVIEW"
+            color: "#6C6C6C"
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+
+            MouseArea {
+                property point clickPoint: "0,0"
+
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton
+                onPressed: {
+                    clickPoint  = Qt.point(mouse.x, mouse.y)
+                }
+                onPositionChanged: {
+                    var offset = Qt.point(mouse.x - clickPoint.x, mouse.y - clickPoint.y)
+                    setDlgPoint(offset.x, offset.y)
+                }
+                function setDlgPoint(dlgX ,dlgY)
+                {
+                    //设置窗口拖拽不能超过父窗口
+                    if(previewPopup.x + dlgX < 0){
+                        previewPopup.x = 0
+                    }
+                    else if(previewPopup.x + dlgX > previewPopup.parent.width - previewPopup.width){
+                        previewPopup.x = previewPopup.parent.width - previewPopup.width
+                    }
+                    else{
+                        previewPopup.x = previewPopup.x + dlgX
+                    }
+                    if(previewPopup.y + dlgY < 0){
+                        previewPopup.y = 0
+                    }
+                    else if(previewPopup.y + dlgY > previewPopup.parent.height - previewPopup.height){
+                        previewPopup.y = previewPopup.parent.height - previewPopup.height
+                    }
+                    else{
+                        previewPopup.y = previewPopup.y + dlgY
+                    }
+                }
+            }
+        }
+
+        ListModel {
+            id: premodel
+        }
+
+        Component {
+            id: predelegate
+            Column {
+                id: column1
+                property int row: index
+                Row {
+                    spacing: 1
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(0).width
+                        text: iserialID
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(1).width
+                        text: supplierID
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(2).width
+                        text: totalprice
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(3).width
+                        text: userID
+                    }
+                    ItemDelegate {
+                        width: preview.headerItem.itemAt(4).width
+                        text: time
+                    }
+                }
+
+                Rectangle {
+                    color: "silver"
+                    width: preview.headerItem.width
+                    height: 1
+                }
+            }
+        }
+
+        ListView {
+            id: preview
+            anchors.topMargin: 50
+            anchors.fill: parent
+            contentWidth: headerItem.width
+            flickableDirection: Flickable.HorizontalAndVerticalFlick
+            highlightFollowsCurrentItem: true
+            header: Row {
+                z: 2
+                spacing: 1
+                function itemAt(index) { return prerepeater.itemAt(index) }
+                Repeater {
+                    id: prerepeater
+                    model: ["IserialID", "SupplierID", "Total Price", "UserID", "Time"]
+                    Label {
+                        text: modelData
+                        color: "#ffffffff"
+                        font.pixelSize: 20
+                        padding: 10
+                        width: previewPopup.width/6
+                        background: Rectangle { color: "#20B2AA"}
+                        MouseArea {
+                            property point clickPoint: "0,0"
+
+                            anchors.fill: parent
+                            acceptedButtons: Qt.LeftButton
+                            onPressed: {
+                                clickPoint  = Qt.point(mouse.x, mouse.y)
+                                parent.parent.parent.parent.flickableDirection = Flickable.VerticalFlick
+                            }
+                            onReleased: parent.parent.parent.parent.flickableDirection = Flickable.HorizontalAndVerticalFlick
+                            onPositionChanged: {
+                                var offset = Qt.point(mouse.x - clickPoint.x, mouse.y - clickPoint.y)
+                                setDlgPoint(offset.x, offset.y)
+                            }
+                            function setDlgPoint(dlgX) {
+                                if(width>=50||dlgX>0)
+                                    parent.width = parent.width + dlgX/100
+                            }
+                        }
+                    }
+                }
+            }
+            headerPositioning: ListView.OverlayHeader
+            model: premodel
+            delegate: predelegate
+            ScrollIndicator.horizontal: ScrollIndicator { }
+            ScrollIndicator.vertical: ScrollIndicator { }
+        }
+
+
+        Button {
+            x:100
+            y: parent.height - 100
+            text: "ReplaceDB"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                excelconnection.saveImportinfo(fileDialogIn.fileUrl)
+                previewPopup.close()
+                refresh1()
+            }
+        }
+
+
+        Button {
+            x: parent.width - 150
+            y: parent.height - 100
+
+            text: "cancel"
+            Material.background: "#20B2AA"
+            Material.foreground: "#FFFFFF"
+            onClicked: {
+                previewPopup.close()
+            }
+        }
+    }
+
+
 
     ToolBar {
         x: 0
@@ -765,6 +819,102 @@ Item {
         }
 
         ToolButton {
+            x: 240
+            width: 60
+            height: parent.height
+            checkable: false
+            autoExclusive: false
+            focusPolicy: Qt.StrongFocus
+            Image {
+                x:parent.width/2-15
+                y:parent.height/2-17
+                width: 30
+                height: 34
+                source: "out.png"
+            }
+            onClicked: {
+                fileDialogOut.open()
+            }
+        }
+
+        FileDialog {
+            id: fileDialogOut
+            title: "Please choose a file"
+            onAccepted: {
+                console.log("You chose: " + fileDialogOut.fileUrl)
+                excelconnection.dbtoExcel(5, fileDialogOut.fileUrl)
+            }
+            onRejected: {
+                console.log("Canceled")
+            }
+            Component.onCompleted: visible = false
+            selectExisting: false
+        }
+
+        ToolButton {
+            x: 300
+            width: 60
+            height: parent.height
+            checkable: false
+            autoExclusive: false
+            focusPolicy: Qt.StrongFocus
+            Image {
+                x:parent.width/2-15
+                y:parent.height/2-17
+                width: 30
+                height: 34
+                source: "in.png"
+            }
+            onClicked: {
+                fileDialogIn.open()
+            }
+        }
+
+        FileDialog {
+            id: fileDialogIn
+            title: "Please choose a file"
+            onAccepted: {
+                console.log("You chose: " + fileDialogIn.fileUrl)
+                previewPopup.open()
+
+                premodel.clear()
+                var list = excelconnection.openImportinfo(fileDialogIn.fileUrl)
+                for(var i = 0; i < list.length; i++){
+                    premodel.append({"iserialID": list[i].getIserialID,
+                                   "supplierID": list[i].getSupplierID,
+                                   "totalprice": list[i].getTotalprice.toString(),
+                                   "userID": list[i].getUserID,
+                                   "time": Qt.formatDateTime(list[i].getTime, "yyyy-MM-dd hh:mm:ss").toString()
+                                  })
+                }
+
+            }
+            onRejected: {
+                console.log("Canceled")
+            }
+            Component.onCompleted: visible = false
+        }
+
+        ToolButton {
+            x: 360
+            width: 60
+            height: parent.height
+            checkable: false
+            autoExclusive: false
+            focusPolicy: Qt.StrongFocus
+            Image {
+                x:parent.width/2-15
+                y:parent.height/2-15
+                width: 30
+                height: 30
+                source: "chart.png"
+            }
+            onClicked: {
+                homeStackView.push("ImportChart.qml")
+            }
+        }
+
+        ToolButton {
             id: viewButton
             x: parent.width - 60
             width: 60
@@ -803,7 +953,7 @@ Item {
 
         ComboBox {
             id: sortBox
-            x: parent.width - 400
+            x: parent.width - 360
             width: 150
             height: 50
             Material.accent: "#008080"

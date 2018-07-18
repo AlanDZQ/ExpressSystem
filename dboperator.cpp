@@ -25,6 +25,7 @@
 #include "exportgood.h"
 #include "exportstatus.h"
 #include "importgood.h"
+#include "exportpricetime.h"
 
 DBOperator::DBOperator(QObject *parent){}
 DBOperator::~DBOperator(){}
@@ -100,8 +101,8 @@ void DBOperator::undo(){
                 delEG(undoData[0],undoData[1],undoData[2],undoData[3]);
                 break;
             case 13:
-                delImportFull(undoData[0],undoData[1],undoData[2],undoData[3],undoData[4],undoData[5],undoData[7]
-                        ,undoData[9]);
+                delImportFull(undoData[0],undoData[1],undoData[2],undoData[3],undoData[4],undoData[6],undoData[7]
+                        ,undoData[8]);
                 break;
             case 14:
                 delIG(undoData[0],undoData[1],undoData[2],undoData[3]);
@@ -141,7 +142,7 @@ void DBOperator::undo(){
             case 8:
                 addUserinfo(undoData[0],undoData[1],undoData[2]
                         ,undoData[3],undoData[4],undoData[5],undoData[6]
-                        ,undoData[7],undoData[8],undoData[9]);
+                        ,undoData[7],undoData[8],undoData[9],undoData[10]);
                 break;
             case 9:
                 addWarehouseinfo(undoData[0],undoData[1],undoData[2]);
@@ -154,8 +155,8 @@ void DBOperator::undo(){
                 addEG(undoData[0],undoData[1],undoData[2],undoData[3]);
                 break;
             case 23:
-                addImportFull(undoData[0],undoData[1],undoData[2],undoData[3],undoData[4],undoData[5],undoData[7]
-                        ,undoData[9]);
+                addImportFull(undoData[0],undoData[1],undoData[2],undoData[3],undoData[4],undoData[6],undoData[7]
+                        ,undoData[8]);
                 break;
             case 24:
                 addIG(undoData[0],undoData[1],undoData[2],undoData[3]);
@@ -195,7 +196,7 @@ void DBOperator::undo(){
             case 8:
                 editUserinfo(undoData[0],undoData[1],undoData[2]
                         ,undoData[3],undoData[4],undoData[5],undoData[6]
-                        ,undoData[7],undoData[8],undoData[9]);
+                        ,undoData[7],undoData[8],undoData[9],undoData[10]);
                 break;
             case 9:
                 editWarehouseinfo(undoData[0],undoData[1],undoData[2]);
@@ -220,16 +221,19 @@ void DBOperator::addUserinfo(QString userID,
                              QString salary,
                              QString email,
                              QString phone,
-                             QString wagecardID){
+                             QString wagecardID,
+                             QString url){
     int age1 = age.toInt();
     double salary1 = salary.toDouble();
     QSqlQuery query;
-    QString sqlquery = QString("insert into NEUSOFT1.USER_INFO values('%1','%2','%3','%4','%5','%6','%7','%8','%9','%10')")
+    QString sqlquery = QString("insert into NEUSOFT1.USER_INFO values('%1','%2','%3','%4','%5','%6','%7','%8','%9','%10','%11')")
             .arg(userID,password,name,gender)
             .arg(age1)
             .arg(privilege)
             .arg(salary1)
-            .arg(email,phone,wagecardID);
+            .arg(email,phone,wagecardID)
+            .arg(url);
+    qDebug()<<sqlquery;
 
     saveOperation(sqlquery);
     undoData.clear();
@@ -243,6 +247,7 @@ void DBOperator::addUserinfo(QString userID,
     undoData.append(email);
     undoData.append(phone);
     undoData.append(wagecardID);
+    undoData.append(url);
 
     this->lastClassNum = 8;
     query.exec(sqlquery);
@@ -896,7 +901,7 @@ void DBOperator::delExportFull(QString eserialID,
 
     query4.exec(sqlquery4);
     query4.next();
-    int amountOfGood = query4.value(0).toInt() - amount.toInt();
+    int amountOfGood = query4.value(0).toInt() + amount.toInt();
 
     QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
                                 " amount = '%3' "
@@ -943,7 +948,7 @@ void DBOperator::delEG(QString eserialID,
 
     query4.exec(sqlquery4);
     query4.next();
-    int amountOfGood = query4.value(0).toInt() - amount.toInt();
+    int amountOfGood = query4.value(0).toInt() + amount.toInt();
 
     QString sqlquery5 = QString("UPDATE NEUSOFT1.GOODS_INFO SET  "
                                 " amount = '%3' "
@@ -982,6 +987,7 @@ void DBOperator::delImportFull(QString iserialID,
     QSqlQuery query5;
     QString sqlquery4 = QString("SELECT amount FROM NEUSOFT1.GOODS_INFO WHERE warehouseID = '%1' and goodID = '%2' ")
             .arg(warehouseID, goodID);
+    qDebug()<<"****del****"<<sqlquery4;
 
     query4.exec(sqlquery4);
     query4.next();
@@ -993,6 +999,8 @@ void DBOperator::delImportFull(QString iserialID,
             .arg(goodID,warehouseID)
             .arg(amountOfGood);
     query5.exec(sqlquery5);
+    qDebug()<<"****del****"<<sqlquery5;
+
 
     saveOperation("DELETE");
     undoData.clear();
@@ -1272,7 +1280,8 @@ void DBOperator::editUserinfo(QString userID,
                               QString salary,
                               QString email,
                               QString phone,
-                              QString wagecardID){
+                              QString wagecardID,
+                              QString url){
     int age1 = age.toInt();
     double salary1 = salary.toDouble();
 
@@ -1300,12 +1309,13 @@ void DBOperator::editUserinfo(QString userID,
     QSqlQuery query;
     QString sqlquery = QString("UPDATE NEUSOFT1.USER_INFO SET password = '%2' "
                                ", name = '%3', gender = '%4', age = '%5', privilege = '%6'"
-                               ", salary = '%7', email = '%8' , phone = '%9' , wagecardID = '%10'  WHERE userID = '%1'")
+                               ", salary = '%7', email = '%8' , phone = '%9' , wagecardID = '%10', headpicurl = '%11'  WHERE userID = '%1'")
             .arg(userID,password,name,gender)
             .arg(age1)
             .arg(privilege)
             .arg(salary1)
-            .arg(email,phone,wagecardID);
+            .arg(email,phone,wagecardID)
+            .arg(url);
     saveOperation(sqlquery);
     query.exec(sqlquery);
     qDebug()<<"editUserinfo OK"<<endl;
@@ -1685,9 +1695,21 @@ QList<QVariant> DBOperator::searchUser(QString theOne){
     return list;
 }
 
+QString DBOperator::searchURL(QString theOne){
+
+    QSqlQuery query;
+    QList<QVariant> list = {};
+    QString sqlquery = QString("SELECT headPicURL FROM NEUSOFT1.USER_INFO WHERE userID="+theOne);
+
+    query.exec(sqlquery);
+    query.next();
+    QString s = query.value(0).toString();
+    qDebug()<<s;
+    return s;
+}
+
 
 QList<QVariant> DBOperator::searchWarehouse(QString theOne){
-
     QSqlQuery query;
     QList<QVariant> list = {};
     QString sqlquery = QString("SELECT * FROM NEUSOFT1.WAREHOUSE_INFO WHERE warehouseID LIKE '%" "%1" "%' OR userID LIKE '%" "%1" "%' "
@@ -1697,6 +1719,19 @@ QList<QVariant> DBOperator::searchWarehouse(QString theOne){
     while(query.next()){
         Warehouse* wh = new Warehouse(query.value(0).toString(), query.value(1).toString(), query.value(2).toString());
         list.append(QVariant::fromValue(wh));
+    }
+    return list;
+}
+
+QList<QVariant> DBOperator::searchExport_Price_Time(){
+    QSqlQuery query;
+    QList<QVariant> list = {};
+    QString sqlquery = QString("SELECT EXPORT_INFO.eserialID,EXPORT_INFO.totalprice,EXPORT_STATUS_INFO.time FROM EXPORT_INFO,EXPORT_STATUS_INFO WHERE EXPORT_INFO.eserialID=EXPORT_STATUS_INFO.eserialID AND EXPORT_STATUS_INFO.status='REC' ORDER BY time");
+
+    query.exec(sqlquery);
+    while(query.next()){
+        Exportpricetime* ept = new Exportpricetime(query.value(1).toDouble(), query.value(2).toDateTime());
+        list.append(QVariant::fromValue(ept));
     }
     return list;
 }
